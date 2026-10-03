@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+</head>
+<body class="admin-body">
+  <div class="admin-login-wrap">
+    <form class="admin-login-card" id="loginForm">
+      <i data-lucide="lock-keyhole" style="width:40px;height:40px;color:var(--primary);margin-bottom:10px;"></i>
+      <h1 id="titleLabel"></h1>
+      <div class="form-group" style="text-align:start;">
+        <label id="passLabel"></label>
+        <input type="password" id="password" required autofocus>
+      </div>
+      <button type="submit" class="btn-primary" id="loginBtn"></button>
+      <p id="errorMsg" class="mini-note" style="color:#e63946;margin-top:10px;display:none;"></p>
+      <a href="/menu.html" class="mini-note" style="display:block;margin-top:16px;">← <span id="backHome"></span></a>
+    </form>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    applyDocDir();
+    applySecondaryColor();
+    document.getElementById('titleLabel').textContent = t('admin_login');
+    document.getElementById('passLabel').textContent = t('password');
+    document.getElementById('loginBtn').textContent = t('login');
+    document.getElementById('backHome').textContent = t('go_to_menu');
+
+    if (Store.isAdminLoggedIn()) location.replace('/admin/index.html');
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const p = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+      const btn = document.getElementById('loginBtn');
+      errorMsg.style.display = 'none';
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/menu', { headers: { 'x-admin-secret': p } });
+        if (res.ok) {
+          Store.setAdminSecret(p);
+          location.href = '/admin/index.html';
+          return;
+        }
+        errorMsg.textContent = t('invalid_login');
+        errorMsg.style.display = 'block';
+      } catch (err) {
+        errorMsg.textContent = t('invalid_login');
+        errorMsg.style.display = 'block';
+      }
+      btn.disabled = false;
+    });
+
+    renderIcons();
+  </script>
+</body>
+</html>

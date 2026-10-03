@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <h2 id="sideTitle"></h2>
+      <nav id="sideNav"></nav>
+    </aside>
+    <div style="flex:1;display:flex;flex-direction:column;">
+      <nav class="admin-mobile-nav" id="mobileNav"></nav>
+      <main class="admin-main">
+        <div class="admin-topbar">
+          <div style="display:flex;align-items:center;gap:10px;">
+          </div>
+          <div style="display:flex;gap:10px;">
+            <a href="/menu.html" target="_blank" class="btn-sm btn-edit" id="viewSiteBtn"></a>
+            <button id="logoutBtn" class="btn-sm btn-del"></button>
+          </div>
+        </div>
+
+        <section class="admin-section" id="sec-branches"></section>
+        <section class="admin-section" id="sec-slider"></section>
+        <section class="admin-section" id="sec-homepage"></section>
+        <section class="admin-section" id="sec-categories"></section>
+        <section class="admin-section" id="sec-products"></section>
+        <section class="admin-section" id="sec-delivery"></section>
+        <section class="admin-section" id="sec-colors"></section>
+        <section class="admin-section" id="sec-general"></section>
+        <section class="admin-section" id="sec-footer"></section>
+        <section class="admin-section" id="sec-login"></section>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/store.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>
