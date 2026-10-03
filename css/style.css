@@ -115,8 +115,8 @@ body:has(#site-header) { padding-top: var(--header-h); }
 }
 .footer-contact-item i { width: 15px; height: 15px; flex: 0 0 15px; }
 .footer-socials {
-  display: flex; justify-content: center; align-items: center;
-  gap: 22px; width: 100%; margin-top: 18px;
+  display: flex; justify-content: flex-start; align-items: center;
+  direction: ltr; gap: 22px; width: 100%; margin-top: 18px;
 }
 .footer-social {
   display: inline-flex; align-items: center; justify-content: center;
