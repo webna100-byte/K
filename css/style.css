@@ -115,12 +115,16 @@ body:has(#site-header) { padding-top: var(--header-h); }
 }
 .footer-contact-item i { width: 15px; height: 15px; flex: 0 0 15px; }
 .footer-socials {
-  display: flex; justify-content: flex-start; align-items: center;
-  direction: ltr; gap: 22px; width: 100%; margin-top: 18px;
+  display: flex; flex-direction: row; justify-content: flex-start !important;
+  align-items: center; direction: ltr; gap: 22px;
+  width: 100%; max-width: 100%; margin: 18px 0 0 0 !important;
+  padding: 0 !important; align-self: flex-start !important;
+  text-align: left;
 }
 .footer-social {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px; color: #1f2937;
+  flex: 0 0 24px; width: 24px; height: 24px;
+  margin: 0 !important; padding: 0 !important; color: #1f2937;
 }
 .footer-social i { width: 18px; height: 18px; }
 .footer-admin-btn {
