@@ -94,16 +94,11 @@ function renderHeader({ showBack = false, backHref = null, showCart = true } = {
   renderIcons();
 }
 
-function socialIconSVG(key) {
-  const common = 'viewBox="0 0 24 24" aria-hidden="true" focusable="false"';
-  const paths = {
-    instagram: `<svg ${common} fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>`,
-    facebook: `<svg ${common} fill="currentColor"><path d="M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.9c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H8v3h2.6v8h2.9z"/></svg>`,
-    tiktok: `<svg ${common} fill="currentColor"><path d="M14.7 3h3c.2 1.7 1.2 3.1 2.8 4v3.1c-1.4 0-2.8-.4-4-1.2v6.3c0 3.8-2.5 5.8-5.8 5.8-3 0-5.4-2.2-5.4-5.2 0-3.1 2.5-5.3 5.8-5.3.3 0 .6 0 .9.1v3.1c-.3-.1-.6-.1-.9-.1-1.5 0-2.7.9-2.7 2.2 0 1.2 1 2.1 2.3 2.1 1.5 0 2.7-.8 2.7-3V3z"/></svg>`,
-    youtube: `<svg ${common} fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.8V8.2l6.3 3.8-6.3 3.8z"/></svg>`,
-    x: `<svg ${common} fill="currentColor"><path d="M18.9 2h3.7l-8.1 9.3L24 22h-7.5l-5.9-7.7L4 22H.3l8.7-10L0 2h7.7l5.3 7L18.9 2zm-1.3 17.9h2.1L6.4 4H4.1l13.5 15.9z"/></svg>`
-  };
-  return paths[key] || '';
+function normalizeExternalUrl(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return '';
+  if (/^(https?:\/\/|mailto:|tel:)/i.test(raw)) return raw;
+  return 'https://' + raw.replace(/^\/+/, '');
 }
 
 function renderFooter() {
@@ -115,27 +110,23 @@ function renderFooter() {
   if (settings.phone) contact.push(`<a class="footer-contact-item" href="tel:${escapeHtml(settings.phone)}"><i data-lucide="phone"></i><span>${escapeHtml(settings.phone)}</span></a>`);
   if (settings.footerEmail) contact.push(`<a class="footer-contact-item" href="mailto:${escapeHtml(settings.footerEmail)}"><i data-lucide="mail"></i><span>${escapeHtml(settings.footerEmail)}</span></a>`);
   if (settings.address) contact.push(`<div class="footer-contact-item"><i data-lucide="map-pin"></i><span>${escapeHtml(settings.address)}</span></div>`);
-
-  // Fixed order: Instagram, Facebook, TikTok, YouTube, X.
   const socialMap = [
-    ['instagram', 'Instagram'],
-    ['facebook', 'Facebook'],
-    ['tiktok', 'TikTok'],
-    ['youtube', 'YouTube'],
-    ['x', 'X']
+    ['instagram','instagram'],['facebook','facebook'],['tiktok','music-2'],['youtube','youtube'],['x','twitter']
   ];
   const socialHtml = socialMap
-    .filter(([key]) => social[key])
-    .map(([key, label]) => `<a class="footer-social" href="${escapeHtml(social[key])}" target="_blank" rel="noopener noreferrer" aria-label="${label}">${socialIconSVG(key)}</a>`)
+    .map(([key, icon]) => [key, icon, normalizeExternalUrl(social[key])])
+    .filter(([, , url]) => url)
+    .map(([key, icon, url]) => `<a class="footer-social" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="${key}"><i data-lucide="${icon}"></i></a>`)
     .join('');
-
   const name = tField(settings.restaurantName) || 'Restaurant';
+  const copyrightName = escapeHtml(name);
   footer.innerHTML = `
     <div class="footer-inner">
-      ${contact.length ? `<div class="footer-contact"><div class="footer-contact-divider"></div>${contact.join('')}</div>` : ''}
+      ${contact.length || socialHtml ? '<div class="footer-contact-divider"></div>' : ''}
+      ${contact.length ? `<div class="footer-contact">${contact.join('')}</div>` : ''}
       ${socialHtml ? `<div class="footer-socials">${socialHtml}</div>` : ''}
-      <button id="footerAdminBtn" class="footer-admin-btn"><span class="footer-name">${escapeHtml(name)}</span></button>
-      <div class="footer-copyright">جميع الحقوق محفوظة لدى - <span class="footer-copyright-name">${escapeHtml(name)}</span></div>
+      <button id="footerAdminBtn" class="footer-admin-btn"><span class="footer-name">${copyrightName}</span></button>
+      <div class="footer-copyright">© 2026 ${copyrightName}. All rights reserved.</div>
     </div>
   `;
   document.getElementById('footerAdminBtn').addEventListener('click', () => { location.href = 'admin/login.html'; });
