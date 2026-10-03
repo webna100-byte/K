@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menu</title>
+<style>
+html, body { margin: 0; padding: 0; background: #fff; color-scheme: light; }
+.app-splash { position: fixed; inset: 0; background: #fff; display: flex; align-items: center; justify-content: center; z-index: 99999; }
+.app-splash img { max-width: 130px; max-height: 130px; object-fit: contain; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="css/style.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="css/style.css"></noscript>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+</head>
+<body class="menu-page">
+  <div class="app-splash" id="appSplash"><img id="splashLogo" alt="" style="display:none;"></div>
+  <header id="site-header"></header>
+  <main>
+    <div class="slider" id="slider"></div>
+    <div class="categories-bar" id="categoriesBar"></div>
+    <div id="menuSections"></div>
+  </main>
+  <footer id="site-footer"></footer>
+
+  <div class="modal-overlay hidden" id="productModal">
+    <div class="modal-sheet-wrap">
+      <button class="close-modal" id="closeModal"><i data-lucide="x"></i></button>
+      <div class="modal-sheet" id="modalContent"></div>
+    </div>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/menu.js"></script>
+</body>
+</html>

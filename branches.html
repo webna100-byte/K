@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Branches</title>
+<style>
+/* Inlined so it paints instantly, before any network request finishes -
+   this is what covers the page until everything below is fully ready. */
+html, body { margin: 0; padding: 0; background: #fff; color-scheme: light; }
+.app-splash { position: fixed; inset: 0; background: #fff; display: flex; align-items: center; justify-content: center; z-index: 99999; }
+.app-splash img { max-width: 130px; max-height: 130px; object-fit: contain; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="css/style.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="css/style.css"></noscript>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+</head>
+<body class="branches-page">
+  <div class="app-splash" id="appSplash"><img id="splashLogo" alt="" style="display:none;"></div>
+  <header id="site-header"></header>
+  <main>
+    <div class="branches-page-top"><div class="branches-hero-title" id="heroTitle"></div></div>
+    <div class="branches-grid" id="branchesGrid"></div>
+  </main>
+  <footer id="site-footer"></footer>
+
+  <script src="js/store.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+  (async function () {
+    await Store.ready;
+
+    const logo = Store.get().settings.logo;
+    if (logo) {
+      const img = document.getElementById('splashLogo');
+      if (img) { img.src = logo; img.style.display = 'block'; }
+    }
+
+    applyDocDir();
+    applyPageColors('branches');
+    renderHeader({ showBack: true, backHref: 'index.html' });
+    renderFooter();
+
+    const data = Store.get();
+    document.getElementById('heroTitle').textContent = t('branches_title');
+    document.title = tField(data.settings.restaurantName);
+
+    const grid = document.getElementById('branchesGrid');
+    grid.innerHTML = data.branches.map(b => `
+      <a href="#" class="branch-card" data-id="${b.id}">
+        <img src="${b.image || PLACEHOLDER_IMG}" alt="${tField(b.name)}">
+        <div class="branch-name">${tField(b.name)}</div>
+      </a>
+    `).join('');
+
+    grid.querySelectorAll('.branch-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        Store.setSelectedBranch(card.dataset.id);
+        location.href = 'menu.html';
+      });
+    });
+
+    renderIcons();
+    hideSplash();
+  })();
+  </script>
+</body>
+</html>

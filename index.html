@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restaurant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+</head>
+<body>
+<div class="app-splash" id="appSplash"><img id="splashLogo" alt="" style="display:none"></div>
+<header id="site-header"></header>
+<main>
+  <section class="home-hero" id="homeHero" style="--hero-image:none;">
+    <div class="home-hero-overlay"></div>
+    <div class="home-hero-content">
+      <span class="home-eyebrow" id="heroEyebrow"></span>
+      <h1 id="heroTitle"></h1>
+      <p id="heroText"></p>
+      <div class="home-actions"><a class="btn-secondary home-view-menu" href="menu.html">View Menu</a></div>
+    </div>
+  </section>
+  <section class="home-section">
+    <div class="section-heading"><span id="serveEyebrow"></span><h2 id="serveTitle"></h2></div>
+    <div id="homeCategories" class="home-category-grid"></div>
+  </section>
+  <section class="home-section home-featured">
+    <div class="section-heading"><span id="favoritesEyebrow"></span><h2 id="favoritesTitle"></h2></div>
+    <div id="featuredProducts" class="products-grid"></div>
+  </section>
+  <section class="home-cta"><div><span id="ctaEyebrow"></span><h2 id="ctaTitle"></h2></div><a id="bottomOrder" class="btn-primary" href="menu.html"></a></section>
+</main>
+<footer id="site-footer"></footer>
+<script src="js/store.js"></script><script src="js/i18n.js"></script><script src="js/ui.js"></script>
+<script>
+(async()=>{await Store.ready;applyDocDir();applyPageColors('homepage');applySecondaryColor();applyHeaderColor();const d=Store.get(),s=d.settings;const splash=document.getElementById('splashLogo');if(s.logo){splash.src=s.logo;splash.style.display='block'}
+document.title=tField(s.restaurantName)||'Restaurant';renderHeader({showCart:false});renderFooter();
+const hp=s.homepage||{};
+const hero=hp.hero||{}, serve=hp.categories||{}, fav=hp.featured||{}, cta=hp.cta||{};
+document.getElementById('heroEyebrow').textContent=hero.eyebrow||'';
+document.getElementById('heroTitle').textContent=hero.title||tField(s.restaurantName)||'Welcome';
+document.getElementById('heroText').textContent=hero.text||'';document.getElementById('homeHero').style.setProperty('--hero-image',hero.image ? `url(\"${hero.image}\")` : 'none');
+document.querySelector('.home-view-menu').textContent=hero.button||'View Menu';
+document.getElementById('serveEyebrow').textContent=serve.eyebrow||'';
+document.getElementById('serveTitle').textContent=serve.title||'';
+document.getElementById('favoritesEyebrow').textContent=fav.eyebrow||'';
+document.getElementById('favoritesTitle').textContent=fav.title||'';
+document.getElementById('ctaEyebrow').textContent=cta.eyebrow||'';
+document.getElementById('ctaTitle').textContent=cta.title||'';
+document.getElementById('bottomOrder').textContent=cta.button||'Start Your Order';
+const multi=s.multiBranch&&d.branches.length>1;const target=multi?'branches.html':'menu.html';document.querySelector('.home-view-menu').href=target;document.getElementById('bottomOrder').href=target;
+const selectedCatIds=Array.isArray(serve.selectedIds)?serve.selectedIds:null;
+const allCats=sortByOrder(d.categories||[]);
+const cats=selectedCatIds ? selectedCatIds.map(id=>allCats.find(c=>c.id===id)).filter(Boolean) : allCats;
+document.getElementById('homeCategories').innerHTML=cats.map(c=>`<a class="home-category" href="${target}"><img src="${c.image||PLACEHOLDER_IMG}" alt=""><strong>${tField(c.name)}</strong></a>`).join('');
+const selectedProductIds=Array.isArray(fav.selectedIds)?fav.selectedIds:null;
+const availableProducts=sortByOrder((d.products||[]).filter(p=>!p.branchIds?.length||p.branchIds.includes(d.branches[0]?.id)));
+const products=selectedProductIds ? selectedProductIds.map(id=>availableProducts.find(p=>p.id===id)).filter(Boolean) : availableProducts;
+document.getElementById('featuredProducts').innerHTML=products.map(p=>`<div class="product-card"><div class="product-image-wrap"><img src="${p.image||PLACEHOLDER_IMG}" alt=""></div><div class="product-info"><h3>${tField(p.name)}</h3><p>${tField(p.description)}</p><div class="product-price"><span>${fmtMoney(productBasePrice(p))}</span></div><a class="product-add-btn" href="${target}">${escapeHtml(fav.button||'Order Now')}</a></div></div>`).join('');renderIcons();hideSplash();})();
+</script>
+</body></html>
