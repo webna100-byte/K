@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/icons.js"></script>
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar"><h2>Admin Panel</h2><nav id="sideNav"></nav></aside>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+      <nav class="admin-mobile-nav" id="mobileNav"></nav>
+      <main class="admin-main">
+        <div class="admin-topbar"><div></div><div style="display:flex;gap:10px"><a href="/" target="_blank" class="btn-sm btn-edit">View website ↗</a><button id="logoutBtn" class="btn-sm btn-del">Sign out</button></div></div>
+        <div id="section"><div class="card skeleton tall"></div></div>
+      </main>
+    </div>
+  </div>
+  <div class="sync-bar" id="syncBar"></div>
+  <script src="/js/pricing.js"></script><script src="/js/i18n.js"></script><script src="/js/store.js"></script><script src="/js/firebase.js"></script><script src="/js/ui.js"></script><script src="/js/receipt.js"></script><script src="/js/admin.js"></script>
+</body>
+</html>

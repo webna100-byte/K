@@ -1,11 +1,171 @@
-# Premium Restaurant Ordering System
+# قالب موقع طلبات المطاعم (White Label)
 
-English-only static restaurant website with menu, branches, cart, checkout, admin customization, and transactional order email.
+موقع طلبات أونلاين لأي مطعم، ثنائي اللغة (عربي افتراضي + إنجليزي)، مع نقاط ولاء وهدايا ومستويات، ولوحة كاشير بتنبيه صوتي، وإشعارات للزبائن. كل شيء يعمل على **الخطط المجانية** من Cloudflare وFirebase.
 
-## Email setup
-Each restaurant uses its own Brevo account. Put these values in the restaurant's Vercel project Environment Variables (never in public files): `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`, and optional `BREVO_SENDER_NAME`. The destination order email is configured from the Admin Panel.
+| الجزء | الخدمة | ملاحظات |
+|---|---|---|
+| الموقع والصفحات | Cloudflare Pages | مجلد `public/` |
+| الخادم (الطلبات، النقاط، الكاشير، الإشعارات) | Cloudflare Pages Functions | مجلد `functions/` |
+| إعدادات المطعم والقائمة والصور والإشعارات | Cloudflare KV | ربط باسم `STORE` |
+| تسجيل دخول الزبائن (Gmail فقط) | Firebase Authentication | Google فقط |
+| الطلبات ونقاط الزبائن والكاشير | Cloud Firestore | القراءة فقط من المتصفح، والكتابة من الخادم |
+| إشعارات Android / iPhone / الكمبيوتر | Firebase Cloud Messaging | |
 
-## Admin data sync
-The admin panel stores public menu/site data in `data.json` through `/api/menu`, which commits changes to GitHub. Required variables: `ADMIN_SECRET`, `GITHUB_TOKEN`, `GITHUB_OWNER`, `GITHUB_REPO`; optional `GITHUB_BRANCH`, `GITHUB_PATH`.
+## ما الموجود في الموقع
 
-No database, WhatsApp, or card payment integration is included.
+- **الهيدر:** زر اللغة بجانب الشعار، وقائمة همبرجر فيها: تسجيل الدخول/الخروج، سياسة الخصوصية، سياسة الإرجاع والاستبدال.
+- **الشريط السفلي:** المستويات · الهدايا · الرئيسية (في الوسط) · الإشعارات · طلباتي.
+- **الدخول بـ Gmail فقط.** التصفح والسلة متاحة للجميع، وإرسال الطلب يحتاج دخولاً. زر الدخول ظاهر في الرئيسية، ومن يحاول إتمام الطلب بدون دخول يُحوَّل لصفحة الدخول ثم يرجع للدفع.
+- **المستويات (فضي ← ذهبي ← ماسي):** تُحسب من مجموع النقاط المكتسبة، ولا تنزل عند صرف النقاط. لكل مستوى خصم دائم على الفاتورة.
+- **الهدايا:** فئات بالنقاط، وفي كل فئة 3 هدايا. يقدر الزبون أن يأخذ عدة هدايا، أو نفس الهدية أكثر من مرة، ما دام رصيده يكفي.
+- **طلباتي:** حالة كل طلب مباشرة (قيد الانتظار ← قيد التحضير ← تم التسليم، أو ملغي).
+- **الإشعارات:** يرسلها المطعم من لوحة الإدارة، وتظهر أيضاً كقائمة داخل الموقع.
+- **كل صفحة من الثمانية** لها صورة 16:9 تحت الهيدر، ونصوص قابلة للتعديل من لوحة الإدارة > Pages.
+
+### قواعد النقاط (محمية في الخادم)
+- النقاط = قيمة الطلب **بعد الخصومات وبدون التوصيل** ÷ (المبلغ لكل نقطة). تُضاف **فقط عند "تم التسليم"**، ومرة واحدة.
+- **نقاط الهدايا:**
+  - في السلة تكون حجزاً للجلسة فقط (sessionStorage)، ولا يُخصم شيء.
+  - إذا خرج الزبون أو انتهت الجلسة بدون طلب، تختفي الهدايا ورصيده كما هو.
+  - عند إرسال الطلب، يتحقق الخادم من الرصيد ويخصمه ويُنشئ الطلب **في معاملة واحدة**، فلا يمكن صرف النقاط مرتين (من تبويبين أو جهازين أو بطلب مكرر).
+- إذا رُفض الطلب أو أُلغي، تعود نقاط الهدايا مرة واحدة.
+- الخادم يعيد حساب كل الأسعار والخصومات والنقاط من القائمة المحفوظة، ويتجاهل أي سعر يرسله المتصفح.
+
+### لوحة الإدارة `/admin` (بكلمة سر)
+أقسامها:
+- **الطلبات:** كل الفروع، مباشرة، مع فلتر بالفترة والحالة والفرع، وتغيير الحالة، وطباعة، وحذف ✕.
+- **المحتوى:** الفروع، المنتجات، الأقسام، مناطق التوصيل.
+- **خصومات الفاتورة:** حسب نطاق القيمة، نسبة أو مبلغ.
+- **خصومات التوصيل:** نسبة، أو مبلغ، أو توصيل مجاني.
+- **النقاط والهدايا والمستويات:** معدل النقاط، فئات الهدايا وصورها، نقاط كل مستوى ونسبة خصمه.
+- **الصفحات والإشعارات.**
+- **حسابات الكاشير:** لكل فرع حساب أو أكثر.
+- **الألوان والإعدادات.**
+- **نسخة احتياطية/استيراد، والبيانات التجريبية.**
+
+الواجهة بالإنجليزية، وكل نص يظهر للزبون له حقلان: عربي وإنجليزي.
+
+### لوحة الكاشير `/cashier`
+- يرى الكاشير طلبات فرعه فقط.
+- **التنبيه يرنّ باستمرار** حتى يُقبل الطلب أو يُرفض.
+- يستطيع: قبول ← تم التسليم، أو رفض/إلغاء، وطباعة (حرارية 80 أو 58 ملم أو A4).
+- **لا يستطيع** حذف الطلبات ولا الدخول للإدارة.
+- إذا عطّلت حسابه من الإدارة، يُقفل فوراً.
+
+### لماذا لا يرجع الموقع لاسم "Urban Table" أبداً
+- البيانات التجريبية المدمجة في الكود حُذفت نهائياً.
+- آخر نسخة ناجحة من بيانات المطعم تُحفظ على جهاز الزائر. إذا انقطع الاتصال تُعرض هذه النسخة، وإذا لم توجد تظهر شاشة "إعادة المحاولة"، ولا تظهر بيانات مطعم آخر أبداً.
+- لوحة الإدارة لا تسمح بالتعديل إذا لم تُحمَّل البيانات الحقيقية.
+- كل حفظ يحمل رقم نسخة، فلا يمكن لتبويب قديم أن يكتب فوق بيانات أحدث.
+
+---
+
+## إعداد مطعم جديد (أقل من ساعة)
+
+### 1) Firebase (حوالي 15 دقيقة)
+1. من [console.firebase.google.com](https://console.firebase.google.com) أنشئ مشروعاً جديداً على **خطة Spark المجانية** (لا تحتاج بطاقة).
+2. **Authentication ← Sign-in method:** فعّل **Google** فقط.
+3. **Authentication ← Settings ← Authorized domains:** أضف `اسم-المشروع.pages.dev` ودومين المطعم إن وُجد.
+4. **Firestore Database ← Create database:**
+   - اختر وضع production، ومنطقة قريبة (مثلاً `me-central2` الدمام للخليج، أو `eur3`).
+   - من تبويب **Rules** الصق محتوى ملف `firestore.rules` واضغط **Publish**.
+5. **Project settings ← General ← Your apps:** أضف تطبيق Web، وانسخ `apiKey` و`projectId` و`appId` و`messagingSenderId`.
+6. **Project settings ← Cloud Messaging ← Web Push certificates:** اضغط Generate key pair وانسخ المفتاح (VAPID).
+7. **Project settings ← Service accounts ← Generate new private key:** ينزل ملف JSON، تحتاج منه `client_email` و`private_key`.
+
+### 2) Cloudflare (حوالي 15 دقيقة)
+1. استنسخ هذا المستودع لمستودع جديد باسم المطعم (أو اعمل له Fork).
+2. **Workers & Pages ← Create ← Pages ← Connect to Git:** اختر المستودع.
+   - Build command: فارغ.
+   - Build output directory: `public`.
+3. **Workers & Pages ← KV ← Create namespace:** باسم مثل `rest-NAME`.
+4. في مشروع Pages: **Settings ← Bindings ← Add ← KV namespace**، الاسم `STORE` واختر الـ namespace.
+5. **Settings ← Variables and Secrets:** أضف المتغيرات التالية (اجعل الحساس منها Secret):
+
+| المتغير | القيمة |
+|---|---|
+| `FIREBASE_PROJECT_ID` | projectId |
+| `FIREBASE_API_KEY` | apiKey |
+| `FIREBASE_APP_ID` | appId |
+| `FIREBASE_MESSAGING_SENDER_ID` | messagingSenderId |
+| `FIREBASE_VAPID_KEY` | مفتاح Web Push |
+| `FIREBASE_CLIENT_EMAIL` | `client_email` من ملف JSON |
+| `FIREBASE_PRIVATE_KEY` (Secret) | `private_key` من ملف JSON كما هو (مع `\n`) |
+| `ADMIN_PASSWORD` (Secret) | كلمة سر لوحة الإدارة للمطعم |
+| `FIREBASE_AUTH_DOMAIN` (اختياري) | دومين الموقع نفسه، انظر "دخول Google على iPhone" |
+
+6. **Deployments ← Retry deployment** حتى تُطبَّق المتغيرات.
+
+### 3) تخصيص المطعم (حوالي 20 دقيقة)
+1. افتح `https://الموقع/admin` وادخل بكلمة السر، ثم اضغط **Start from demo**.
+2. **Restaurant Settings:** الشعار، الاسم بالعربي والإنجليزي، العملة، المنطقة الزمنية، لغة الموقع الافتراضية، عرض الإيصال.
+3. **Colors:** لون الهيدر واللون الثانوي (الأزرار وزر الدخول).
+4. **Branches** و**Delivery Zones**، ثم **Categories** و**Products**.
+5. **Discounts** و**Points, Gifts & Levels**.
+6. **Pages:** صور ونصوص الصفحات الثمانية، و**Homepage**.
+7. **Cashiers:** حساب لكل فرع، وأعطِ الكاشير رابط `https://الموقع/cashier`.
+8. **Footer & Contact.**
+9. جرّب طلباً من جوالك وتابع وصوله للكاشير.
+
+> **نصيحة:** بعد تجهيز مطعم، احفظ نسخة من **Backup & Data ← Download backup**. يمكنك استيرادها كنقطة بداية لمطعم مشابه.
+
+### دخول Google على iPhone والتطبيق المثبّت
+Safari يمنع تخزين الطرف الثالث، وهذا قد يُفشل الدخول عند تثبيت الموقع على الشاشة الرئيسية. الحل المدمج:
+1. ضع `FIREBASE_AUTH_DOMAIN` = دومين الموقع (مثلاً `rest-name.pages.dev`). الملف `functions/__/auth/[[path]].js` يمرّر صفحات الدخول من نفس الدومين.
+2. في [Google Cloud Console ← APIs & Services ← Credentials](https://console.cloud.google.com/apis/credentials) افتح "Web client (auto created by Google Service)"، وأضف إلى **Authorized redirect URIs**:
+   `https://دومين-الموقع/__/auth/handler`
+
+### إشعارات iPhone
+تصل على iOS 16.4 أو أحدث **فقط بعد إضافة الموقع إلى الشاشة الرئيسية**، وهذا قيد من Apple. صفحة الإشعارات تشرح للزبون الخطوات تلقائياً. أما Android والكمبيوتر فتعمل مباشرة.
+
+---
+
+## الحدود المجانية (لمطعم عادي بعيدة جداً)
+
+| الخدمة | الحد المجاني | الاستهلاك |
+|---|---|---|
+| Cloudflare Pages Functions | 100,000 طلب/يوم | زيارة الصفحة ≈ طلب واحد لـ `/api/site`، مخزّن على الحافة |
+| Cloudflare KV | 100,000 قراءة و1,000 كتابة/يوم | الكتابة فقط عند حفظ الإدارة أو رفع صورة أو إرسال إشعار |
+| Firestore | 50,000 قراءة و20,000 كتابة/يوم | الطلب ≈ 3 كتابات، وتغيير الحالة ≈ 2 |
+| Firebase Auth (Google) | بلا حد عملي | |
+| FCM | مجاني | الإشعار العام = طلب واحد لكل لغة (Topics) |
+
+الصور تُضغط في المتصفح (WebP) قبل رفعها، وتُقدَّم بتخزين مؤقت لسنة.
+
+---
+
+## التطوير المحلي والاختبارات
+
+```bash
+npm install
+cp .dev.vars.example .dev.vars   # ضع أي مفتاح RSA في FIREBASE_PRIVATE_KEY
+npm run emulators                 # Firestore + Auth emulators (يحتاج Java)
+npm run seed:local                # يحمّل البيانات التجريبية في KV المحلي
+npm run dev                       # http://127.0.0.1:8788
+npm test                          # اختبارات منطق الأسعار والنقاط
+npm run test:api                  # 21 اختبار تكامل: الطلب، النقاط، الهدايا، الكاشير، الصلاحيات
+PLAYWRIGHT=… FIREBASE_PKG=… npm run test:ui   # تجربة كاملة في متصفح بحجم iPhone
+```
+
+### بنية الملفات
+```
+public/                 الموقع (Cloudflare Pages)
+  js/pricing.js         حساب الأسعار والخصومات والنقاط (يستخدمه المتصفح والخادم معاً)
+  js/i18n.js            نصوص الواجهة عربي/إنجليزي
+  js/store.js           تحميل بيانات المطعم + السلة + سلة الهدايا (session)
+  js/firebase.js        Firebase عند الحاجة فقط + الدخول + الإشعارات
+  js/ui.js              الهيدر، قائمة الهمبرجر، الشريط السفلي، الفوتر
+  js/pages.js           الدخول، المستويات، الهدايا، طلباتي، الإشعارات، السياسات
+  js/admin.js           لوحة الإدارة
+  js/cashier.js         لوحة الكاشير
+  js/receipt.js         الطباعة الحرارية
+  js/icons.js           الأيقونات المستخدمة فقط (scripts/build-icons.mjs)
+  seed/demo-config.json البيانات التجريبية ثنائية اللغة
+functions/              الخادم (Pages Functions)
+  api/site.js           بيانات الموقع العامة (مخزّنة على الحافة)
+  api/orders/*.js       إنشاء الطلب / تغيير الحالة / الحذف
+  api/auth/*.js         دخول الإدارة والكاشير
+  api/admin/*.js        الإعدادات، رفع الصور، الكاشير، الإشعارات
+  _middleware.js        عنوان وصورة المعاينة (Open Graph) لكل مطعم
+firestore.rules         قواعد أمان Firestore
+```

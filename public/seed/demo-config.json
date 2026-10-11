@@ -1,0 +1,767 @@
+{
+ "schemaVersion": 7,
+ "version": 1,
+ "settings": {
+  "restaurantName": {
+   "ar": "K",
+   "en": "K"
+  },
+  "logo": "/demo/logo.webp",
+  "currency": "USD",
+  "timezone": "Asia/Kuwait",
+  "defaultLang": "ar",
+  "minimumOrder": 0,
+  "taxRate": 2,
+  "multiBranch": true,
+  "phone": "+123456789",
+  "footerEmail": "k@gmail.com",
+  "address": {
+   "ar": "وسط المدينة",
+   "en": "Downtown"
+  },
+  "socialLinks": {
+   "facebook": "facebook.com",
+   "instagram": "instagram.com",
+   "tiktok": "tiktok.com",
+   "x": "",
+   "youtube": ""
+  },
+  "slider": {
+   "images": [
+    "/demo/slide1.webp",
+    "/demo/slide2.webp",
+    "/demo/slide3.webp"
+   ],
+   "intervalSeconds": 2.5
+  },
+  "colors": {
+   "branches": {
+    "type": "solid",
+    "color1": "#ffffff",
+    "color2": "#ffffff",
+    "angle": 135
+   },
+   "menu": {
+    "type": "solid",
+    "color1": "#ffffff",
+    "color2": "#ffffff",
+    "angle": 135
+   },
+   "checkout": {
+    "type": "solid",
+    "color1": "#ffffff",
+    "color2": "#ffffff",
+    "angle": 135
+   },
+   "secondary": {
+    "type": "gradient",
+    "color1": "#8f0000",
+    "color2": "#ff4d4d",
+    "angle": 135
+   },
+   "header": {
+    "type": "solid",
+    "color1": "#ffffff",
+    "color2": "#ffffff",
+    "angle": 135
+   },
+   "homepage": {
+    "type": "solid",
+    "color1": "#ffffff",
+    "color2": "#ffffff",
+    "angle": 135
+   }
+  },
+  "receipt": {
+   "paperWidth": 80
+  },
+  "homepage": {
+   "hero": {
+    "eyebrow": {
+     "ar": "طازج. سريع. محضّر لك.",
+     "en": "Fresh. Fast. Made for you."
+    },
+    "title": {
+     "ar": "K",
+     "en": "K"
+    },
+    "text": {
+     "ar": "اطلب أطباقك المفضلة أونلاين للاستلام أو التوصيل.",
+     "en": "Order your favorites online for pickup or delivery."
+    },
+    "button": {
+     "ar": "تصفّح القائمة",
+     "en": "View Menu"
+    },
+    "image": "/demo/hero.webp"
+   },
+   "login": {
+    "title": {
+     "ar": "سجّل دخولك واجمع النقاط",
+     "en": "Sign in and earn points"
+    },
+    "text": {
+     "ar": "كل طلب يقرّبك من هدية مجانية ومستوى أعلى.",
+     "en": "Every order brings you closer to free gifts and a higher level."
+    },
+    "button": {
+     "ar": "تسجيل الدخول باستخدام Google",
+     "en": "Sign in with Google"
+    }
+   },
+   "categories": {
+    "eyebrow": {
+     "ar": "ماذا نقدّم",
+     "en": "What we serve"
+    },
+    "title": {
+     "ar": "أطباق تشتهيها",
+     "en": "Made to crave"
+    },
+    "selectedIds": [
+     "cat_burgers",
+     "cat_pizza",
+     "cat_drinks",
+     "cat_desserts"
+    ]
+   },
+   "featured": {
+    "eyebrow": {
+     "ar": "المفضّلة لدى زبائننا",
+     "en": "Customer favorites"
+    },
+    "title": {
+     "ar": "الأكثر طلباً",
+     "en": "Popular picks"
+    },
+    "button": {
+     "ar": "اطلب الآن",
+     "en": "Order Now"
+    },
+    "selectedIds": [
+     "prod_classic_burger",
+     "prod_crispy_chicken",
+     "prod_margherita",
+     "prod_pepperoni",
+     "prod_cheesecake",
+     "prod_brownie"
+    ]
+   },
+   "cta": {
+    "eyebrow": {
+     "ar": "جوعان؟",
+     "en": "Hungry?"
+    },
+    "title": {
+     "ar": "وجبتك المفضلة على بُعد نقرة.",
+     "en": "Your next favorite meal is one click away."
+    },
+    "button": {
+     "ar": "ابدأ طلبك",
+     "en": "Start Your Order"
+    }
+   }
+  }
+ },
+ "pages": {
+  "login": {
+   "image": "/demo/page-login.webp",
+   "title": {
+    "ar": "تسجيل الدخول",
+    "en": "Sign in"
+   },
+   "text": {
+    "ar": "سجّل دخولك بحساب Google لتطلب وتجمع النقاط وتتابع طلباتك.",
+    "en": "Sign in with your Google account to order, earn points and track your orders."
+   },
+   "button": {
+    "ar": "المتابعة باستخدام Google",
+    "en": "Continue with Google"
+   }
+  },
+  "levels": {
+   "image": "/demo/page-levels.webp",
+   "title": {
+    "ar": "المستويات",
+    "en": "Levels"
+   },
+   "text": {
+    "ar": "كلما طلبت أكثر ارتفع مستواك وزاد خصمك الدائم.",
+    "en": "The more you order, the higher your level and your permanent discount."
+   },
+   "lockedText": {
+    "ar": "سجّل الدخول لتستطيع رؤية مستواك",
+    "en": "Sign in to see your level"
+   },
+   "button": {
+    "ar": "تسجيل الدخول",
+    "en": "Sign in"
+   }
+  },
+  "gifts": {
+   "image": "/demo/page-gifts.webp",
+   "title": {
+    "ar": "الهدايا",
+    "en": "Gifts"
+   },
+   "text": {
+    "ar": "استبدل نقاطك بهدايا مجانية مع طلبك.",
+    "en": "Redeem your points for free gifts with your order."
+   },
+   "lockedText": {
+    "ar": "سجّل الدخول لتستطيع رؤية الهدايا",
+    "en": "Sign in to see the gifts"
+   },
+   "button": {
+    "ar": "تسجيل الدخول",
+    "en": "Sign in"
+   }
+  },
+  "orders": {
+   "image": "/demo/page-orders.webp",
+   "title": {
+    "ar": "طلباتي",
+    "en": "My Orders"
+   },
+   "text": {
+    "ar": "تابع حالة طلباتك لحظة بلحظة.",
+    "en": "Track your orders in real time."
+   },
+   "lockedText": {
+    "ar": "سجّل الدخول لتستطيع رؤية طلباتك",
+    "en": "Sign in to see your orders"
+   },
+   "button": {
+    "ar": "تسجيل الدخول",
+    "en": "Sign in"
+   },
+   "emptyText": {
+    "ar": "لا توجد طلبات بعد.",
+    "en": "No orders yet."
+   }
+  },
+  "notifications": {
+   "image": "/demo/page-notifications.webp",
+   "title": {
+    "ar": "الإشعارات",
+    "en": "Notifications"
+   },
+   "text": {
+    "ar": "آخر العروض والأخبار من المطعم.",
+    "en": "The latest offers and news from the restaurant."
+   },
+   "emptyText": {
+    "ar": "لا توجد إشعارات حالياً.",
+    "en": "No notifications yet."
+   },
+   "button": {
+    "ar": "تفعيل الإشعارات",
+    "en": "Enable notifications"
+   }
+  },
+  "privacy": {
+   "image": "/demo/page-privacy.webp",
+   "title": {
+    "ar": "سياسة الخصوصية",
+    "en": "Privacy Policy"
+   },
+   "text": {
+    "ar": "نحترم خصوصيتك. توضّح هذه السياسة البيانات التي نجمعها وكيف نستخدمها.\n\nالبيانات التي نجمعها:\n• الاسم والبريد الإلكتروني من حساب Google عند تسجيل الدخول.\n• رقم الجوال وعنوان التوصيل الذي تُدخله عند الطلب.\n• تفاصيل طلباتك ونقاطك ومستواك.\n\nكيف نستخدمها:\n• لتجهيز طلبك وتوصيله والتواصل معك بخصوصه.\n• لاحتساب نقاط الولاء والهدايا والمستويات.\n• لإرسال إشعارات العروض إذا وافقت عليها.\n\nلا نبيع بياناتك ولا نشاركها مع أي طرف ثالث إلا بالقدر اللازم لتقديم الخدمة. يمكنك طلب حذف بياناتك في أي وقت بالتواصل معنا.",
+    "en": "We respect your privacy. This policy explains what data we collect and how we use it.\n\nData we collect:\n• Your name and email from your Google account when you sign in.\n• The phone number and delivery address you enter when ordering.\n• Your order details, points and level.\n\nHow we use it:\n• To prepare and deliver your order and contact you about it.\n• To calculate loyalty points, gifts and levels.\n• To send offer notifications if you allow them.\n\nWe never sell your data or share it with third parties except as needed to provide the service. You can ask us to delete your data at any time by contacting us."
+   }
+  },
+  "returns": {
+   "image": "/demo/page-returns.webp",
+   "title": {
+    "ar": "سياسة الإرجاع والاستبدال",
+    "en": "Return & Exchange Policy"
+   },
+   "text": {
+    "ar": "رضاك يهمّنا. إذا وصلك طلب غير صحيح أو فيه مشكلة:\n\n• تواصل معنا خلال ساعة من استلام الطلب مع صورة للمشكلة.\n• نستبدل الصنف غير الصحيح أو التالف مجاناً، أو نعيد قيمته.\n• لا يمكن إرجاع الأطعمة بعد استهلاكها أو تغيير الطلب بعد بدء التحضير.\n• إذا رفض المطعم طلبك، تعود نقاط الهدايا إلى حسابك تلقائياً.",
+    "en": "Your satisfaction matters to us. If your order arrives incorrect or with a problem:\n\n• Contact us within one hour of receiving the order with a photo of the issue.\n• We will replace the wrong or damaged item free of charge, or refund its value.\n• Food cannot be returned once consumed, and orders cannot be changed once preparation starts.\n• If the restaurant rejects your order, your gift points return to your account automatically."
+   }
+  }
+ },
+ "loyalty": {
+  "enabled": true,
+  "amountPerPoint": 1,
+  "tiers": [
+   {
+    "id": "tier_1",
+    "points": 100,
+    "gifts": [
+     {
+      "id": "gift_cola",
+      "name": {
+       "ar": "كولا مجانية",
+       "en": "Free Cola"
+      },
+      "image": "/demo/prod_cola.webp"
+     },
+     {
+      "id": "gift_water",
+      "name": {
+       "ar": "مياه مجانية",
+       "en": "Free Water"
+      },
+      "image": "/demo/prod_water.webp"
+     },
+     {
+      "id": "gift_lemonade",
+      "name": {
+       "ar": "ليموناضة مجانية",
+       "en": "Free Lemonade"
+      },
+      "image": "/demo/prod_lemonade.webp"
+     }
+    ]
+   },
+   {
+    "id": "tier_2",
+    "points": 250,
+    "gifts": [
+     {
+      "id": "gift_brownie",
+      "name": {
+       "ar": "براونيز مجاني",
+       "en": "Free Brownie"
+      },
+      "image": "/demo/prod_brownie.webp"
+     },
+     {
+      "id": "gift_cheesecake",
+      "name": {
+       "ar": "تشيز كيك مجاني",
+       "en": "Free Cheesecake"
+      },
+      "image": "/demo/prod_cheesecake.webp"
+     },
+     {
+      "id": "gift_salad",
+      "name": {
+       "ar": "سلطة مجانية",
+       "en": "Free Salad"
+      },
+      "image": "/demo/prod_house_salad.webp"
+     }
+    ]
+   },
+   {
+    "id": "tier_3",
+    "points": 500,
+    "gifts": [
+     {
+      "id": "gift_burger",
+      "name": {
+       "ar": "برجر كلاسيك مجاني",
+       "en": "Free Classic Burger"
+      },
+      "image": "/demo/prod_classic_burger.webp"
+     },
+     {
+      "id": "gift_pizza",
+      "name": {
+       "ar": "بيتزا مارغريتا مجانية",
+       "en": "Free Margherita Pizza"
+      },
+      "image": "/demo/prod_margherita.webp"
+     },
+     {
+      "id": "gift_chicken",
+      "name": {
+       "ar": "برجر دجاج مجاني",
+       "en": "Free Chicken Burger"
+      },
+      "image": "/demo/prod_crispy_chicken.webp"
+     }
+    ]
+   }
+  ],
+  "levels": [
+   {
+    "id": "silver",
+    "name": {
+     "ar": "المستوى الفضي",
+     "en": "Silver"
+    },
+    "points": 300,
+    "discountPercent": 5,
+    "image": "/demo/level-silver.svg"
+   },
+   {
+    "id": "gold",
+    "name": {
+     "ar": "المستوى الذهبي",
+     "en": "Gold"
+    },
+    "points": 1000,
+    "discountPercent": 10,
+    "image": "/demo/level-gold.svg"
+   },
+   {
+    "id": "diamond",
+    "name": {
+     "ar": "المستوى الماسي",
+     "en": "Diamond"
+    },
+    "points": 2500,
+    "discountPercent": 15,
+    "image": "/demo/level-diamond.svg"
+   }
+  ]
+ },
+ "discounts": {
+  "invoice": [
+   {
+    "id": "inv_1",
+    "min": 50,
+    "max": 99.99,
+    "type": "percent",
+    "value": 5
+   },
+   {
+    "id": "inv_2",
+    "min": 100,
+    "max": null,
+    "type": "percent",
+    "value": 10
+   }
+  ],
+  "delivery": [
+   {
+    "id": "del_1",
+    "min": 30,
+    "max": 49.99,
+    "type": "percent",
+    "value": 50
+   },
+   {
+    "id": "del_2",
+    "min": 50,
+    "max": null,
+    "type": "free",
+    "value": 0
+   }
+  ]
+ },
+ "branches": [
+  {
+   "id": "branch_downtown",
+   "name": {
+    "ar": "وسط المدينة",
+    "en": "Downtown"
+   },
+   "image": "/demo/branch_downtown.webp",
+   "pickupEnabled": true,
+   "deliveryEnabled": true,
+   "deliveryZones": [
+    {
+     "id": "zone_branch_downtown_standard",
+     "name": {
+      "ar": "توصيل عادي",
+      "en": "Standard Delivery"
+     },
+     "price": 4.5
+    },
+    {
+     "id": "zone_branch_downtown_extended",
+     "name": {
+      "ar": "منطقة ممتدة",
+      "en": "Extended Area"
+     },
+     "price": 7.5
+    }
+   ]
+  },
+  {
+   "id": "branch_westside",
+   "name": {
+    "ar": "الفرع الغربي",
+    "en": "Westside"
+   },
+   "image": "/demo/branch_westside.webp",
+   "pickupEnabled": true,
+   "deliveryEnabled": true,
+   "deliveryZones": [
+    {
+     "id": "zone_mu0kg8zacf69b5",
+     "name": {
+      "ar": "المنطقة الغربية",
+      "en": "West"
+     },
+     "price": 6
+    }
+   ]
+  }
+ ],
+ "categories": [
+  {
+   "id": "cat_burgers",
+   "name": {
+    "ar": "برجر",
+    "en": "Burgers"
+   },
+   "image": "/demo/cat_burgers.webp",
+   "branchIds": [],
+   "order": 0
+  },
+  {
+   "id": "cat_pizza",
+   "name": {
+    "ar": "بيتزا",
+    "en": "Pizza"
+   },
+   "image": "/demo/cat_pizza.webp",
+   "branchIds": [],
+   "order": 1
+  },
+  {
+   "id": "cat_drinks",
+   "name": {
+    "ar": "مشروبات",
+    "en": "Drinks"
+   },
+   "image": "/demo/cat_drinks.webp",
+   "branchIds": [],
+   "order": 2
+  },
+  {
+   "id": "cat_desserts",
+   "name": {
+    "ar": "حلويات",
+    "en": "Desserts"
+   },
+   "image": "/demo/cat_desserts.webp",
+   "branchIds": [],
+   "order": 3
+  },
+  {
+   "id": "cat_salads",
+   "name": {
+    "ar": "سلطات",
+    "en": "Salads"
+   },
+   "image": "/demo/cat_salads.webp",
+   "branchIds": [],
+   "order": 4
+  }
+ ],
+ "products": [
+  {
+   "id": "prod_classic_burger",
+   "categoryId": "cat_burgers",
+   "image": "/demo/prod_classic_burger.webp",
+   "price": 9.5,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 0,
+   "name": {
+    "ar": "برجر كلاسيك",
+    "en": "Classic Burger"
+   },
+   "description": {
+    "ar": "قطعة لحم مشوية مع خس وطماطم وصوص البيت",
+    "en": "Grilled beef patty, lettuce, tomato and house sauce"
+   },
+   "optionGroups": []
+  },
+  {
+   "id": "prod_crispy_chicken",
+   "categoryId": "cat_burgers",
+   "image": "/demo/prod_crispy_chicken.webp",
+   "price": 10.5,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 1,
+   "name": {
+    "ar": "برجر دجاج كرسبي",
+    "en": "Crispy Chicken Burger"
+   },
+   "description": {
+    "ar": "دجاج مقرمش مع خس ومخلل وصوص خاص",
+    "en": "Crispy chicken, lettuce, pickles and signature sauce"
+   },
+   "optionGroups": []
+  },
+  {
+   "id": "prod_double_cheese",
+   "categoryId": "cat_burgers",
+   "image": "/demo/prod_double_cheese.webp",
+   "price": 12.5,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 2,
+   "name": {
+    "ar": "دبل تشيز برجر",
+    "en": "Double Cheese Burger"
+   },
+   "description": {
+    "ar": "قطعتا لحم مع جبنة شيدر وصوص البيت",
+    "en": "Two beef patties with cheddar and house sauce"
+   },
+   "optionGroups": []
+  },
+  {
+   "id": "prod_margherita",
+   "categoryId": "cat_pizza",
+   "image": "/demo/prod_margherita.webp",
+   "price": 11,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 3,
+   "name": {
+    "ar": "بيتزا مارغريتا",
+    "en": "Margherita Pizza"
+   },
+   "description": {
+    "ar": "صلصة طماطم وموزاريلا وريحان طازج",
+    "en": "Tomato sauce, mozzarella and fresh basil"
+   },
+   "optionGroups": []
+  },
+  {
+   "id": "prod_pepperoni",
+   "categoryId": "cat_pizza",
+   "image": "/demo/prod_pepperoni.webp",
+   "price": 13,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 4,
+   "name": {
+    "ar": "بيتزا ببروني",
+    "en": "Pepperoni Pizza"
+   },
+   "description": {
+    "ar": "موزاريلا وصلصة طماطم وببروني",
+    "en": "Mozzarella, tomato sauce and pepperoni"
+   },
+   "optionGroups": []
+  },
+  {
+   "id": "prod_veggie",
+   "categoryId": "cat_pizza",
+   "image": "/demo/prod_veggie.webp",
+   "price": 12.5,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 5,
+   "name": {
+    "ar": "بيتزا الخضار",
+    "en": "Garden Veggie Pizza"
+   },
+   "description": {
+    "ar": "خضار طازجة وموزاريلا وصلصة طماطم",
+    "en": "Fresh vegetables, mozzarella and tomato sauce"
+   },
+   "optionGroups": []
+  },
+  {
+   "id": "prod_cola",
+   "categoryId": "cat_drinks",
+   "image": "/demo/prod_cola.webp",
+   "price": 2.5,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 6,
+   "name": {
+    "ar": "كولا",
+    "en": "Cola"
+   },
+   "description": {
+    "ar": "مشروب غازي بارد",
+    "en": "Chilled soft drink"
+   },
+   "optionGroups": []
+  },
+  {
+   "id": "prod_lemonade",
+   "categoryId": "cat_drinks",
+   "image": "/demo/prod_lemonade.webp",
+   "price": 4,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 7,
+   "name": {
+    "ar": "ليموناضة طازجة",
+    "en": "Fresh Lemonade"
+   },
+   "description": {
+    "ar": "ليمون معصور طازج",
+    "en": "Freshly squeezed lemonade"
+   },
+   "optionGroups": []
+  },
+  {
+   "id": "prod_water",
+   "categoryId": "cat_drinks",
+   "image": "/demo/prod_water.webp",
+   "price": 1.5,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 8,
+   "name": {
+    "ar": "مياه معدنية",
+    "en": "Bottled Water"
+   },
+   "description": {
+    "ar": "مياه باردة معبأة",
+    "en": "Cold bottled water"
+   },
+   "optionGroups": []
+  },
+  {
+   "id": "prod_cheesecake",
+   "categoryId": "cat_desserts",
+   "image": "/demo/prod_cheesecake.webp",
+   "price": 6,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 9,
+   "name": {
+    "ar": "تشيز كيك",
+    "en": "Cheesecake"
+   },
+   "description": {
+    "ar": "تشيز كيك كريمي بقاعدة زبدة مقرمشة",
+    "en": "Creamy cheesecake with a buttery crust"
+   },
+   "optionGroups": []
+  },
+  {
+   "id": "prod_brownie",
+   "categoryId": "cat_desserts",
+   "image": "/demo/prod_brownie.webp",
+   "price": 5.5,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 10,
+   "name": {
+    "ar": "براونيز شوكولاتة",
+    "en": "Chocolate Brownie"
+   },
+   "description": {
+    "ar": "براونيز شوكولاتة دافئ",
+    "en": "Warm chocolate brownie"
+   },
+   "optionGroups": []
+  },
+  {
+   "id": "prod_house_salad",
+   "categoryId": "cat_salads",
+   "image": "/demo/prod_house_salad.webp",
+   "price": 7.5,
+   "discountPercent": 0,
+   "branchIds": [],
+   "order": 11,
+   "name": {
+    "ar": "سلطة البيت",
+    "en": "House Salad"
+   },
+   "description": {
+    "ar": "خضار ورقية مقرمشة مع طماطم وخيار وصلصة البيت",
+    "en": "Crisp greens, tomato, cucumber and house dressing"
+   },
+   "optionGroups": []
+  }
+ ]
+}

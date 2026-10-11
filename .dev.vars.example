@@ -1,0 +1,11 @@
+# Copy to .dev.vars for local development with the Firebase emulators
+# (npm run emulators, npm run seed:local, npm run dev).
+FIREBASE_PROJECT_ID=demo-test
+FIREBASE_API_KEY=fake-api-key
+FIREBASE_APP_ID=1:1:web:1
+FIREBASE_CLIENT_EMAIL=dev@demo-test.iam.gserviceaccount.com
+# any RSA private key (the emulator doesn't verify it): openssl genpkey -algorithm RSA
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+ADMIN_PASSWORD=test1234
+FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099

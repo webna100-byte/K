@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Cashier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/icons.js"></script>
+</head>
+<body class="cashier-body">
+  <header class="cashier-top">
+    <div class="brand"><img id="logo" alt="" class="hidden"><div><strong id="branchName"></strong><small><span class="conn" id="conn"></span><span id="cashierName"></span></small></div></div>
+    <div style="display:flex;gap:8px"><button class="lang-toggle" id="langBtn"></button><button class="btn-sm btn-del" id="logoutBtn"></button></div>
+  </header>
+  <nav class="cashier-tabs" id="tabs"></nav>
+  <main class="cashier-grid" id="grid"></main>
+  <div class="alarm-banner" id="alarm"><i data-lucide="bell-ring"></i><span></span></div>
+  <div class="shift-overlay" id="shift"><p id="shiftNote"></p><button id="shiftBtn"><i data-lucide="volume-2"></i><span></span></button></div>
+  <script src="/js/pricing.js"></script><script src="/js/i18n.js"></script><script src="/js/store.js"></script><script src="/js/firebase.js"></script><script src="/js/ui.js"></script><script src="/js/receipt.js"></script><script src="/js/cashier.js"></script>
+</body>
+</html>

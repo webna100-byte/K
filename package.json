@@ -1,0 +1,17 @@
+{
+  "name": "restaurant-template",
+  "private": true,
+  "description": "White-label restaurant ordering site: Cloudflare Pages + Functions, Firebase Auth/Firestore/FCM.",
+  "scripts": {
+    "dev": "wrangler pages dev public --port 8788 --kv STORE --compatibility-date=2024-09-23",
+    "seed:local": "wrangler kv key put config --path public/seed/demo-config.json --namespace-id STORE --local",
+    "emulators": "firebase emulators:start --project demo-test",
+    "test": "node --test tests/unit.test.mjs",
+    "test:api": "node tests/api.test.mjs",
+    "test:ui": "node tests/ui.test.mjs"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.0.0",
+    "wrangler": "^3.80.0"
+  }
+}

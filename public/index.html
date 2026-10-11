@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>&#8203;</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<style>
+html,body{margin:0;background:#fff}
+.app-splash{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;z-index:99999;font-family:system-ui,sans-serif}
+.app-splash img{max-width:120px;max-height:120px;object-fit:contain;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.55}}
+</style>
+<script>
+(function(){try{var l=localStorage.getItem('site_lang');if(!l){var c=JSON.parse(localStorage.getItem('site_cache_v2')||'null');l=c&&c.config&&c.config.settings.defaultLang==='en'?'en':'ar'}document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr'}catch(e){}})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/icons.js"></script>
+</head>
+<body data-page="home" class="">
+<div class="app-splash" id="appSplash"><img id="splashLogo" alt=""></div>
+<script>(function(){try{var s=localStorage.getItem('site_logo');var i=document.getElementById('splashLogo');if(s)i.src=s;else i.remove()}catch(e){}})();</script>
+<header id="site-header"></header>
+<main id="main">
+  <section class="home-hero" id="homeHero">
+    <div class="home-hero-overlay"></div>
+    <div class="home-hero-content">
+      <span class="home-eyebrow" id="heroEyebrow"></span>
+      <h1 id="heroTitle"></h1>
+      <p id="heroText"></p>
+      <div class="home-actions"><a class="btn-secondary" id="heroBtn" href="/menu"></a></div>
+    </div>
+  </section>
+  <section class="home-account" id="homeAccount"></section>
+  <section class="home-section" id="homeCatsSection">
+    <div class="section-heading"><span id="serveEyebrow"></span><h2 id="serveTitle"></h2></div>
+    <div id="homeCategories" class="home-category-grid"></div>
+  </section>
+  <section class="home-section home-featured" id="homeFavSection">
+    <div class="section-heading"><span id="favoritesEyebrow"></span><h2 id="favoritesTitle"></h2></div>
+    <div id="featuredProducts" class="products-grid"></div>
+  </section>
+  <section class="home-cta"><div><span id="ctaEyebrow"></span><h2 id="ctaTitle"></h2></div><a id="bottomOrder" class="btn-primary btn-inline" href="/menu"></a></section>
+</main>
+<footer id="site-footer"></footer>
+<nav id="bottom-nav"></nav>
+<script src="/js/pricing.js"></script><script src="/js/i18n.js"></script><script src="/js/store.js"></script><script src="/js/firebase.js"></script><script src="/js/ui.js"></script><script src="/js/home.js"></script>
+</body>
+</html>
