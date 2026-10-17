@@ -102,9 +102,15 @@ function productCardHtml(p) {
 
 function renderCategories() {
   const bar = document.getElementById('categoriesBar');
+  // Look chosen in the admin: circles (default) | pills | cards; sticky or not.
+  const barCfg = data.settings.categoryBar || {};
+  const style = ['circles', 'pills', 'cards'].includes(barCfg.style) ? barCfg.style : 'circles';
+  bar.classList.add('cat-style-' + style);
+  bar.classList.toggle('cat-static', barCfg.sticky === false);
+  document.body.classList.toggle('cat-bar-static', barCfg.sticky === false);
   bar.innerHTML = visibleCategories.map(c => `
     <div class="category-chip" data-id="${c.id}">
-      <img src="${escapeHtml(c.image || PLACEHOLDER_IMG)}" alt="">
+      ${style === 'pills' ? '' : `<img src="${escapeHtml(c.image || PLACEHOLDER_IMG)}" alt="">`}
       <span>${tx(c.name)}</span>
     </div>
   `).join('');

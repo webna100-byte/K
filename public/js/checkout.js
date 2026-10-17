@@ -25,6 +25,7 @@ boot('checkout', async (data) => {
       <button type="button" class="order-type-btn" id="deliveryTab"><i data-lucide="bike"></i><span>${t('delivery')}</span></button>
     </div>
     ${pickupOn && deliveryOn ? '' : `<p class="mini-note notice">${pickupOn ? t('only_pickup') : t('only_delivery')}</p>`}
+    <div class="busy-banner hidden" id="busyBanner"><i data-lucide="clock"></i><span>${t('restaurant_busy')}</span></div>
     <form id="checkoutForm" novalidate>
       <div class="card">
         <h3 id="infoTitle"></h3>
@@ -75,7 +76,7 @@ boot('checkout', async (data) => {
   function errorText(code, extra = {}) {
     if (code === 'below_minimum') return t('below_minimum', { amount: fmtMoney(extra.minimum || data.settings.minimumOrder || 0) });
     if (code === 'empty_cart') return t('empty_cart_err');
-    const map = { zone_required: 'zone_required', no_zones: 'no_zones', product_unavailable: 'product_unavailable', invalid_option: 'invalid_option', invalid_gift: 'invalid_gift', insufficient_points: 'insufficient_points', phone_invalid: 'phone_invalid', address_required: 'address_required', name_required: 'name_required', login_required: 'login_required_to_order' };
+    const map = { zone_required: 'zone_required', no_zones: 'no_zones', product_unavailable: 'product_unavailable', invalid_option: 'invalid_option', invalid_gift: 'invalid_gift', insufficient_points: 'insufficient_points', restaurant_busy: 'restaurant_busy', phone_invalid: 'phone_invalid', address_required: 'address_required', name_required: 'name_required', login_required: 'login_required_to_order' };
     return map[code] ? t(map[code]) : t('order_failed');
   }
 
@@ -114,6 +115,19 @@ boot('checkout', async (data) => {
 
   setType(orderType);
 
+  /* "Busy" mode set by the branch cashier: no new orders until it is off. */
+  let busy = false;
+  async function checkBusy() {
+    try { busy = !!(await api('/api/busy?branchId=' + encodeURIComponent(branch.id))).busy; } catch (e) { return; }
+    const banner = document.getElementById('busyBanner'), btn = document.getElementById('sendBtn');
+    if (!banner || !btn) return;
+    banner.classList.toggle('hidden', !busy);
+    btn.disabled = busy;
+    if (busy) window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  checkBusy();
+  const busyTimer = setInterval(() => { if (document.getElementById('busyBanner')) checkBusy(); else clearInterval(busyTimer); }, 30000);
+
   const form = document.getElementById('checkoutForm');
   const errBox = document.getElementById('formError');
   form.addEventListener('submit', async e => {
@@ -124,6 +138,7 @@ boot('checkout', async (data) => {
     const address = document.getElementById('custAddress').value.trim();
     const notes = document.getElementById('custNotes').value.trim();
     const showErr = msg => { errBox.textContent = msg; errBox.classList.remove('hidden'); errBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+    if (busy) return showErr(t('restaurant_busy'));
     if (!name) return showErr(t('name_required'));
     if (!/^\+?[0-9\s-]{6,20}$/.test(phone)) return showErr(t('phone_invalid'));
     if (orderType === 'delivery') {
@@ -162,6 +177,7 @@ boot('checkout', async (data) => {
       btn.disabled = false; btn.classList.remove('loading');
       if (err.status === 401) { location.href = loginUrl('/checkout'); return; }
       showErr(errorText(err.message, err.data || {}));
+      if (err.message === 'restaurant_busy') checkBusy();
       if (err.message === 'insufficient_points') { Auth._profile = null; }
     }
   });

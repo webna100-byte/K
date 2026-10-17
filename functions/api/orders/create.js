@@ -11,6 +11,7 @@ import '../../../public/js/pricing.js';
 import { json, fail, handle, readJson, authUser, isGoogleCustomer, loadConfig } from '../../_lib/http.js';
 import { Firestore } from '../../_lib/firestore.js';
 import { dayKey, orderId } from '../../_lib/orders.js';
+import { branchBusy } from '../busy.js';
 
 const Pricing = globalThis.Pricing;
 const str = (v, n) => String(v == null ? '' : v).trim().slice(0, n);
@@ -31,6 +32,8 @@ export const onRequestPost = handle(async ({ request, env }) => {
 
   const config = await loadConfig(env);
   if (!config) return fail(503, 'not_configured');
+  const branchKey = str(body.branchId, 80);
+  if (/^[\w-]+$/.test(branchKey) && await branchBusy(env, branchKey)) return fail(423, 'restaurant_busy');
   const fs = new Firestore(env);
   const now = Date.now();
   const id = orderId(now);

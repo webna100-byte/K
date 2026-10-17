@@ -13,8 +13,9 @@
 <body class="cashier-body">
   <header class="cashier-top">
     <div class="brand"><img id="logo" alt="" class="hidden"><div><strong id="branchName"></strong><small><span class="conn" id="conn"></span><span id="cashierName"></span></small></div></div>
-    <div style="display:flex;gap:8px"><button class="lang-toggle" id="langBtn"></button><button class="btn-sm btn-del" id="logoutBtn"></button></div>
+    <div style="display:flex;gap:8px;align-items:center"><label class="busy-toggle" id="busyToggle"><input type="checkbox" id="busyChk"><span class="busy-switch"></span><span id="busyLabel"></span></label><button class="lang-toggle" id="langBtn"></button><button class="btn-sm btn-del" id="logoutBtn"></button></div>
   </header>
+  <div class="busy-strip hidden" id="busyStrip"></div>
   <nav class="cashier-tabs" id="tabs"></nav>
   <main class="cashier-grid" id="grid"></main>
   <div class="alarm-banner" id="alarm"><i data-lucide="bell-ring"></i><span></span></div>

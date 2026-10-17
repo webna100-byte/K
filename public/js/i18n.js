@@ -49,7 +49,8 @@ const I18N = {
     print: 'طباعة', confirm_reject: 'رفض هذا الطلب؟', confirm_cancel: 'إلغاء هذا الطلب؟', no_orders_here: 'لا توجد طلبات هنا',
     connection_lost: 'انقطع الاتصال… جارٍ إعادة المحاولة', logout: 'خروج', customer: 'الزبون', items: 'الأصناف', gifts_label: 'الهدايا',
     new_order_alert: 'طلب جديد!', status_updated: 'تم تحديث الحالة', action_failed: 'تعذّر تنفيذ العملية', customer_points_spent: 'لا يمكن إعادة فتح الطلب: الزبون صرف نقاط الهدايا.',
-    receipt_order: 'طلب', receipt_date: 'التاريخ', receipt_thanks: 'شكراً لطلبكم', account_disabled: 'تم إيقاف هذا الحساب'
+    receipt_order: 'طلب', receipt_date: 'التاريخ', receipt_thanks: 'شكراً لطلبكم', account_disabled: 'تم إيقاف هذا الحساب',
+    restaurant_busy: 'المطعم مشغول حالياً، لا يمكن استقبال طلباتكم الآن.', busy: 'مشغول', busy_on: 'وضع مشغول مفعّل: الموقع لا يستقبل طلبات جديدة', busy_on_toast: 'تم إيقاف استقبال الطلبات', busy_off_toast: 'عاد استقبال الطلبات'
   },
   en: {
     nav_levels: 'Levels', nav_gifts: 'Gifts', nav_home: 'Home', nav_notifications: 'Alerts', nav_orders: 'My Orders',
@@ -96,7 +97,8 @@ const I18N = {
     print: 'Print', confirm_reject: 'Reject this order?', confirm_cancel: 'Cancel this order?', no_orders_here: 'No orders here',
     connection_lost: 'Connection lost… retrying', logout: 'Sign out', customer: 'Customer', items: 'Items', gifts_label: 'Gifts',
     new_order_alert: 'New order!', status_updated: 'Status updated', action_failed: 'Action failed', customer_points_spent: 'Cannot reopen: the customer already spent the gift points.',
-    receipt_order: 'Order', receipt_date: 'Date', receipt_thanks: 'Thank you for your order', account_disabled: 'This account is disabled'
+    receipt_order: 'Order', receipt_date: 'Date', receipt_thanks: 'Thank you for your order', account_disabled: 'This account is disabled',
+    restaurant_busy: 'The restaurant is busy right now and cannot accept your order.', busy: 'Busy', busy_on: 'Busy mode is on: the website is not accepting new orders', busy_on_toast: 'Orders paused', busy_off_toast: 'Orders resumed'
   }
 };
 

@@ -26,6 +26,22 @@
   $('shiftBtn').querySelector('span').textContent = t('start_shift');
   $('alarm').querySelector('span').textContent = t('new_order_alert');
 
+  /* ---------- Busy mode: pauses new orders for this branch ---------- */
+  $('busyLabel').textContent = t('busy');
+  $('busyStrip').textContent = t('busy_on');
+  function showBusy(on) { $('busyChk').checked = on; $('busyToggle').classList.toggle('on', on); $('busyStrip').classList.toggle('hidden', !on); }
+  api('/api/busy?branchId=' + encodeURIComponent(branchId)).then(r => showBusy(!!r.busy)).catch(console.error);
+  $('busyChk').addEventListener('change', async () => {
+    const want = $('busyChk').checked;
+    $('busyChk').disabled = true;
+    try {
+      const r = await api('/api/busy', { method: 'POST', token: await StaffAuth.token(), body: { busy: want } });
+      showBusy(!!r.busy);
+      toast(r.busy ? t('busy_on_toast') : t('busy_off_toast'));
+    } catch (e) { console.error(e); showBusy(!want); toast(t('action_failed')); }
+    $('busyChk').disabled = false;
+  });
+
   /* ---------- Alarm (Web Audio, no sound file needed) ---------- */
   let audio = null, alarmTimer = null, wakeLock = null;
   function beep() {
