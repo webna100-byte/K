@@ -1,22 +1,45 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Admin Panel</title>
+<title data-l="Admin Panel">Admin Panel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
 <script src="/js/icons.js"></script>
+<script src="/js/admin-i18n.js"></script>
+<style>
+  /* language toggle */
+  .admin-lang-btn { font-family: var(--font-en); background: #fff; border: 1px solid var(--border); }
+  html[lang="en"] .admin-lang-btn { font-family: var(--font-ar); }
+  /* category bar style picker */
+  .catbar-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .catbar-opt { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 8px 10px; border: 2px solid var(--border); border-radius: 14px; cursor: pointer; background: #fff; text-align: center; transition: border-color .15s, background .15s; }
+  .catbar-opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .catbar-opt:has(input:checked) { border-color: #b30000; background: #fff5f5; }
+  .catbar-opt:has(input:focus-visible) { outline: 2px solid #b30000; outline-offset: 2px; }
+  .catbar-label { font-size: .82rem; font-weight: 700; }
+  .cbp { display: flex; gap: 6px; align-items: flex-start; justify-content: center; height: 46px; }
+  .cbp i { display: block; background: #d9dce1; }
+  .cbp-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .cbp-text { width: 22px; height: 5px; border-radius: 3px; }
+  .cbp-circles .cbp-img { width: 28px; height: 28px; border-radius: 50%; }
+  .cbp-cards .cbp-img { width: 30px; height: 30px; border-radius: 8px; }
+  .cbp-pills { align-items: center; }
+  .cbp-pill { width: 30px; height: 16px; border-radius: 10px; }
+  .cbp-pills .cbp-pill:first-child { background: #b30000; }
+  @media (max-width: 480px) { .catbar-picker { gap: 6px; } .catbar-opt { padding: 10px 4px 8px; } .catbar-label { font-size: .74rem; } .cbp { gap: 3px; } }
+</style>
 </head>
 <body class="admin-body">
   <div class="admin-shell">
-    <aside class="admin-sidebar"><h2>Admin Panel</h2><nav id="sideNav"></nav></aside>
+    <aside class="admin-sidebar"><h2 data-l="Admin Panel">Admin Panel</h2><nav id="sideNav"></nav></aside>
     <div style="flex:1;display:flex;flex-direction:column;min-width:0">
       <nav class="admin-mobile-nav" id="mobileNav"></nav>
       <main class="admin-main">
-        <div class="admin-topbar"><div></div><div style="display:flex;gap:10px"><a href="/" target="_blank" class="btn-sm btn-edit">View website ↗</a><button id="logoutBtn" class="btn-sm btn-del">Sign out</button></div></div>
+        <div class="admin-topbar"><div></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="btn-sm admin-lang-btn" id="adminLangBtn" data-admin-lang-toggle>English</button><a href="/" target="_blank" class="btn-sm btn-edit" data-l="View website ↗">View website ↗</a><button id="logoutBtn" class="btn-sm btn-del" data-l="Sign out">Sign out</button></div></div>
         <div id="section"><div class="card skeleton tall"></div></div>
       </main>
     </div>

@@ -1,29 +1,36 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Admin Sign in</title>
+<title data-l="Admin Sign in">Admin Sign in</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
 <script src="/js/icons.js"></script>
+<script src="/js/admin-i18n.js"></script>
+<style>
+  .admin-login-wrap { position: relative; }
+  .admin-lang-btn { position: absolute; top: 16px; inset-inline-end: 16px; font-family: var(--font-en); background: #fff; border: 1px solid var(--border); }
+  html[lang="en"] .admin-lang-btn { font-family: var(--font-ar); }
+</style>
 </head>
 <body class="admin-body">
   <div class="admin-login-wrap">
+    <button type="button" class="btn-sm admin-lang-btn" id="adminLangBtn" data-admin-lang-toggle>English</button>
     <form class="admin-login-card" id="loginForm">
       <i data-lucide="lock-keyhole" style="width:40px;height:40px;color:var(--accent);margin-bottom:10px"></i>
-      <h1>Admin Panel</h1>
-      <div class="form-group" style="text-align:start"><label for="password">Password</label><input type="password" id="password" required autofocus autocomplete="current-password"></div>
-      <button type="submit" class="btn-primary" id="loginBtn">Sign in</button>
+      <h1 data-l="Admin Panel">Admin Panel</h1>
+      <div class="form-group" style="text-align:start"><label for="password" data-l="Password">Password</label><input type="password" id="password" required autofocus autocomplete="current-password"></div>
+      <button type="submit" class="btn-primary" id="loginBtn" data-l="Sign in">Sign in</button>
       <p id="errorMsg" class="form-error hidden" style="margin-top:12px"></p>
-      <a href="/" class="mini-note" style="display:block;margin-top:16px">← Back to website</a>
+      <a href="/" class="mini-note" style="display:block;margin-top:16px" data-l="← Back to website">← Back to website</a>
     </form>
   </div>
   <script src="/js/pricing.js"></script><script src="/js/i18n.js"></script><script src="/js/store.js"></script><script src="/js/firebase.js"></script><script src="/js/ui.js"></script>
   <script>
-  window.FORCE_LANG = 'en';
+  window.FORCE_LANG = window.ADMIN_LANG || 'ar';
   (async () => {
     renderIcons();
     try { await Store.load({ fresh: true }); applyTheme(); await StaffAuth.init(); if (StaffAuth.role() === 'admin') location.replace('/admin/'); } catch (e) { console.error(e); }
@@ -37,7 +44,7 @@
         location.href = '/admin/';
       } catch (ex) {
         console.error(ex);
-        err.textContent = ex.message === 'invalid_login' ? 'Wrong password' : ex.message === 'too_many_attempts' ? 'Too many attempts. Wait 10 minutes.' : 'Sign-in failed: ' + ex.message;
+        err.textContent = ex.message === 'invalid_login' ? L('Wrong password') : ex.message === 'too_many_attempts' ? L('Too many attempts. Wait 10 minutes.') : L('Sign-in failed: {msg}', { msg: ex.message });
         err.classList.remove('hidden'); btn.disabled = false;
       }
     });

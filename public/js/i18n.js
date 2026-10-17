@@ -1,7 +1,7 @@
 /* ===================== i18n (Arabic default + English) =====================
    Interface strings live here. Restaurant content (names, descriptions,
    page texts...) is stored as { ar, en } objects in the config and read
-   with tField(). Admin pages set window.FORCE_LANG = 'en'. */
+   with tField(). Admin pages set window.FORCE_LANG from their own toggle. */
 const I18N = {
   ar: {
     nav_levels: 'المستويات', nav_gifts: 'الهدايا', nav_home: 'الرئيسية', nav_notifications: 'الإشعارات', nav_orders: 'طلباتي',
