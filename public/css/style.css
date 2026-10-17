@@ -146,7 +146,7 @@ html[dir="rtl"] .drawer-panel { transform: translateX(104%); }
 .footer-social svg { width: 100%; height: 100%; }
 .footer-links { display: flex; gap: 8px; flex-wrap: wrap; font-size: .8rem; color: var(--muted); }
 .footer-links a { text-decoration: underline; text-underline-offset: 3px; }
-.footer-copyright { font-size: .74rem; color: var(--muted); }
+.footer-copyright { font-size: .74rem; color: var(--muted); text-align: center; width: 100%; }
 
 /* ===================== Buttons & forms ===================== */
 .btn-primary {
@@ -461,7 +461,7 @@ main.page-content { flex: 1; padding: 18px 16px; max-width: 720px; margin: 0 aut
 .success-icon i { width: 36px; height: 36px; }
 
 /* ===================== Misc ===================== */
-.toast { position: fixed; bottom: calc(var(--nav-h) + var(--safe-b) + 16px); left: 50%; transform: translateX(-50%) translateY(20px); background: #111827; color: #fff; padding: 12px 18px; border-radius: 12px; font-size: .88rem; opacity: 0; pointer-events: none; transition: all .25s; z-index: 300; max-width: 90%; text-align: center; font-weight: 600; }
+.toast { position: fixed; bottom: calc(var(--nav-h) + var(--safe-b) + 16px); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--button-bg, #111827); color: #fff; padding: 12px 18px; border-radius: 12px; font-size: .88rem; opacity: 0; pointer-events: none; transition: all .25s; z-index: 300; max-width: 90%; text-align: center; font-weight: 600; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .fatal { text-align: center; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 14px; color: var(--text); font-family: var(--font-ar); }
 .fatal p { margin: 0; max-width: 320px; }

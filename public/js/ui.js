@@ -77,6 +77,10 @@ function updateCartCount() {
   el.classList.toggle('hidden', !n);
 }
 
+/* Where "browse the menu" should go: the branch picker first when there
+   are several branches and none is chosen yet (no in-between redirect). */
+function menuHref() { return Store.isMultiBranch() && !Store.getSelectedBranch() ? '/branches' : '/menu'; }
+
 function loginUrl(next) {
   return '/login?next=' + encodeURIComponent(next || (location.pathname + location.search));
 }
@@ -131,6 +135,7 @@ function renderDrawer() {
         <button class="icon-btn drawer-close" id="drawerClose" aria-label="${t('close')}"><i data-lucide="x"></i></button>
       </div>
       <nav class="drawer-links">
+        <button class="drawer-link" id="drawerBack"><i data-lucide="${getLang() === 'ar' ? 'arrow-right' : 'arrow-left'}"></i><span>${t('back')}</span></button>
         ${signedIn
           ? `<button class="drawer-link" id="drawerLogout"><i data-lucide="log-out"></i><span>${t('menu_logout')}</span></button>`
           : `<a class="drawer-link" href="${loginUrl('/')}"><i data-lucide="log-in"></i><span>${t('menu_login')}</span></a>`}
@@ -139,6 +144,11 @@ function renderDrawer() {
       </nav>
     </aside>`;
   document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+  document.getElementById('drawerBack').addEventListener('click', () => {
+    closeDrawer();
+    const internal = document.referrer && new URL(document.referrer).origin === location.origin;
+    if (internal && history.length > 1) history.back(); else if (location.pathname !== '/') location.href = '/';
+  });
   const out = document.getElementById('drawerLogout');
   if (out) out.addEventListener('click', async () => {
     if (!confirm(t('logout_confirm'))) return;
@@ -227,7 +237,6 @@ function renderFooter() {
     <div class="footer-inner">
       ${contact.length ? `<div class="footer-contact">${contact.join('')}</div>` : ''}
       ${socialHtml ? `<div class="footer-socials">${socialHtml}</div>` : ''}
-      <div class="footer-links"><a href="/privacy">${tField(Store.data.pages?.privacy?.title) || t('menu_privacy')}</a><span>·</span><a href="/returns">${tField(Store.data.pages?.returns?.title) || t('menu_returns')}</a></div>
       <div class="footer-copyright">© ${new Date().getFullYear()} ${name}. ${t('all_rights')}</div>
     </div>`;
 }

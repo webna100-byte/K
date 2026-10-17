@@ -10,7 +10,7 @@ const ICONS = [
   'log-in', 'log-out', 'mail', 'map-pin', 'menu', 'phone', 'refresh-ccw', 'send', 'shield-check', 'shopping-bag', 'shopping-cart',
   'smartphone', 'sparkles', 'star', 'x', 'store', 'images', 'layout-grid', 'utensils', 'truck', 'palette', 'settings', 'panel-bottom',
   'key-round', 'file-text', 'percent', 'users', 'printer', 'trash-2', 'clock', 'volume-2', 'wifi-off', 'download', 'upload', 'database',
-  'chef-hat', 'plus', 'minus', 'external-link', 'refresh-cw', 'filter', 'circle-check', 'circle-x', 'megaphone', 'badge-percent', 'user'
+  'chef-hat', 'plus', 'minus', 'external-link', 'refresh-cw', 'filter', 'circle-check', 'circle-x', 'megaphone', 'badge-percent', 'user', 'arrow-right', 'arrow-left'
 ];
 
 const dir = process.argv[2];

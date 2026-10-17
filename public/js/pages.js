@@ -16,7 +16,6 @@ const Pages = {
       ${heroHtml(page)}
       <div class="locked-card login-card">
         ${googleButtonHtml(tField(page.button) || t('menu_login'))}
-        <p class="mini-note"><a href="/privacy">${tField(pageConfig('privacy').title) || t('menu_privacy')}</a></p>
       </div>`;
     document.getElementById('googleBtn').addEventListener('click', e => doGoogleSignIn(e.currentTarget, safeNext));
   },
@@ -177,7 +176,7 @@ const Pages = {
       const q = m.query(m.collection(db, 'orders'), m.where('uid', '==', user.uid), m.limit(30));
       m.onSnapshot(q, snap => {
         const orders = snap.docs.map(d => d.data()).sort((a, b) => b.createdAtMs - a.createdAtMs);
-        listEl.innerHTML = orders.length ? orders.map(card).join('') : `<div class="empty-state"><i data-lucide="receipt-text"></i><p>${tx(page.emptyText) || t('no_orders_here')}</p><a class="btn-primary btn-inline" href="/menu">${t('go_to_menu')}</a></div>`;
+        listEl.innerHTML = orders.length ? orders.map(card).join('') : `<div class="empty-state"><i data-lucide="receipt-text"></i><p>${tx(page.emptyText) || t('no_orders_here')}</p><a class="btn-primary btn-inline" href="${menuHref()}">${t('go_to_menu')}</a></div>`;
         renderIcons();
       }, err => {
         console.error(err);

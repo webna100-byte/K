@@ -16,7 +16,7 @@ boot('home', async (d) => {
   setText('ctaEyebrow', tField(cta.eyebrow));
   setText('ctaTitle', tField(cta.title));
 
-  const target = Store.isMultiBranch() && !Store.getSelectedBranch() ? '/branches' : '/menu';
+  const target = menuHref();
   const heroBtn = document.getElementById('heroBtn');
   heroBtn.textContent = tField(hero.button) || t('go_to_menu');
   heroBtn.href = target;

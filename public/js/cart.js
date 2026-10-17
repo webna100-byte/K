@@ -27,7 +27,7 @@ boot('cart', async (data) => {
     const summary = document.getElementById('cartSummary');
 
     if (!cart.length && !gifts.length) {
-      list.innerHTML = `<div class="empty-state"><i data-lucide="shopping-bag"></i><p>${t('empty_cart')}</p><a href="/menu" class="btn-primary btn-inline">${t('go_to_menu')}</a></div>`;
+      list.innerHTML = `<div class="empty-state"><i data-lucide="shopping-bag"></i><p>${t('empty_cart')}</p><a href="${menuHref()}" class="btn-primary btn-inline">${t('go_to_menu')}</a></div>`;
       giftList.innerHTML = '';
       summary.classList.add('hidden');
       renderIcons();

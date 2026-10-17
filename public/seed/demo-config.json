@@ -205,8 +205,8 @@
     "en": "Gifts"
    },
    "text": {
-    "ar": "استبدل نقاطك بهدايا مجانية مع طلبك.",
-    "en": "Redeem your points for free gifts with your order."
+    "ar": "استبدل نقاطك بهدايا من اختيارك.",
+    "en": "Redeem your points for gifts of your choice."
    },
    "lockedText": {
     "ar": "سجّل الدخول لتستطيع رؤية الهدايا",
@@ -247,8 +247,8 @@
     "en": "Notifications"
    },
    "text": {
-    "ar": "آخر العروض والأخبار من المطعم.",
-    "en": "The latest offers and news from the restaurant."
+    "ar": "فعّل الإشعارات لتصلك آخر العروض من مطعمنا.",
+    "en": "Turn on notifications to get our latest offers."
    },
    "emptyText": {
     "ar": "لا توجد إشعارات حالياً.",
