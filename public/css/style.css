@@ -620,3 +620,6 @@ body.cat-bar-static .menu-category-section { scroll-margin-top: calc(var(--heade
 
 /* iPhone: Safari zooms into any field under 16px; keep every input at 16px on phones. */
 @media (max-width: 820px) { input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size: 16px !important; } }
+.cashier-tabs .range-switch { margin-inline-start: auto; display: flex; flex: 0 0 auto; border: 1.5px solid var(--border); border-radius: 99px; overflow: hidden; }
+.cashier-tabs .range-switch button { border: 0; border-radius: 0; padding: 8px 12px; font-size: .8rem; }
+.cashier-tabs .range-switch button.on { background: var(--accent); color: #fff; }

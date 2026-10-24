@@ -323,7 +323,7 @@ async function boot(pageKey, render, { colors, needsAuth = false } = {}) {
   }
   renderIcons();
   hideSplash();
-  authReady.then(() => Push.sync());
+  authReady.then(() => Push.sync().then(() => Push.listen()));
 }
 
 function renderDrawerIfOpen() {

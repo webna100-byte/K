@@ -42,45 +42,77 @@
     $('busyChk').disabled = false;
   });
 
-  /* ---------- Alarm (Web Audio, no sound file needed) ---------- */
-  let audio = null, alarmTimer = null, wakeLock = null;
-  function beep() {
-    if (!audio) return;
-    const now = audio.currentTime;
-    [[880, 0], [1175, .18], [880, .36], [1175, .54]].forEach(([f, at]) => {
-      const o = audio.createOscillator(), g = audio.createGain();
-      o.type = 'square'; o.frequency.value = f;
-      g.gain.setValueAtTime(0.0001, now + at);
-      g.gain.exponentialRampToValueAtTime(0.35, now + at + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, now + at + 0.16);
-      o.connect(g).connect(audio.destination);
-      o.start(now + at); o.stop(now + at + 0.17);
-    });
-    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+  /* ---------- Alarm ----------
+     A looping <audio> track (generated here, no sound file needed). Unlike
+     timer-driven beeps it keeps ringing while the tab is in the background
+     or the screen has been idle for hours, until no order is pending. */
+  function alarmWav() {
+    const rate = 22050, secs = 1.6, n = Math.floor(rate * secs);
+    const buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+    const str = (o, t) => [...t].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+    str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVEfmt '); v.setUint32(16, 16, true);
+    v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true);
+    v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, 'data'); v.setUint32(40, n * 2, true);
+    const beeps = [[0, 880], [.18, 1175], [.36, 880], [.54, 1175]];
+    for (let i = 0; i < n; i++) {
+      const t = i / rate;
+      const b = beeps.find(([at]) => t >= at && t < at + .15);
+      let x = 0;
+      if (b) { const env = Math.min(1, (t - b[0]) / .01, (b[0] + .15 - t) / .01); x = (Math.sin(2 * Math.PI * b[1] * t) > 0 ? 1 : -1) * .45 * env; }
+      v.setInt16(44 + i * 2, x * 32767, true);
+    }
+    return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
   }
+  let audio = null, ringing = false, wakeLock = null;
   function setAlarm(on) {
     $('alarm').classList.toggle('show', on);
     document.title = on ? `🔔 ${t('new_order_alert')}` : t('cashier_panel');
-    if (on && !alarmTimer) { beep(); alarmTimer = setInterval(beep, 1800); }
-    if (!on && alarmTimer) { clearInterval(alarmTimer); alarmTimer = null; }
+    ringing = on;
+    if (!audio) return;
+    if (on) { if (audio.paused) audio.play().catch(e => console.warn('alarm', e)); }
+    else if (!audio.paused) { audio.pause(); audio.currentTime = 0; }
+    if (on && navigator.vibrate) navigator.vibrate([200, 100, 200]);
   }
+  // Watchdog: if the browser paused the sound (audio focus, a phone call...)
+  // while an order is still pending, start it again.
+  setInterval(() => { if (ringing && audio && audio.paused) audio.play().catch(() => {}); }, 4000);
   async function keepAwake() {
     try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) { /* not critical */ }
   }
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && audio) { audio.resume(); keepAwake(); } });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { keepAwake(); if (ringing && audio) audio.play().catch(() => {}); } });
   $('shiftBtn').addEventListener('click', () => {
-    audio = new (window.AudioContext || window.webkitAudioContext)();
-    audio.resume();
+    audio = new Audio(alarmWav());
+    audio.loop = true;
+    audio.volume = 1;
+    // Starting (and pausing) inside the tap unlocks playback for later orders.
+    audio.play().then(() => { if (!ringing) audio.pause(); }).catch(() => {});
+    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {});
     $('shift').remove();
     keepAwake();
     draw();
   });
+  const seenPending = new Set();
+  let firstSnapshot = true;
+  function notifyNew(pending, fromCache) {
+    const fresh = pending.filter(o => !seenPending.has(o.id));
+    pending.forEach(o => seenPending.add(o.id));
+    // Orders already waiting when the screen opens ring, but don't pop a notification.
+    if (firstSnapshot) { if (!fromCache) firstSnapshot = false; return; }
+    if (!fresh.length || !('Notification' in window) || Notification.permission !== 'granted') return;
+    try { new Notification(t('new_order_alert'), { body: fresh.map(o => '#' + o.number).join(' · '), tag: 'new-order', renotify: true, requireInteraction: true }); } catch (e) { /* some browsers only allow it from a service worker */ }
+  }
 
   /* ---------- Live data ---------- */
   const orders = new Map();
-  const sources = { active: new Map(), today: new Map() };
+  const sources = { active: new Map(), recent: new Map() };
   let tab = 'new';
-  const TABS = [['new', 'tab_new', o => o.status === 'pending'], ['preparing', 'tab_preparing', o => o.status === 'preparing'], ['done', 'tab_done', o => o.status === 'delivered' && o.day === dayKey(Date.now())], ['cancelled', 'tab_cancelled', o => o.status === 'cancelled' && o.day === dayKey(Date.now())]];
+  // Delivered / cancelled orders: today or the last 7 days (to spot a forgotten order).
+  const DAY = 86400000;
+  const lastDays = n => [...new Set(Array.from({ length: n }, (_, i) => dayKey(Date.now() - i * DAY)))];
+  let range = 'today';
+  try { if (localStorage.getItem('cashier_range') === 'week') range = 'week'; } catch (e) { /* ignore */ }
+  const inRange = o => (range === 'week' ? lastDays(7) : [dayKey(Date.now())]).includes(o.day);
+  const TABS = [['new', 'tab_new', o => o.status === 'pending'], ['preparing', 'tab_preparing', o => o.status === 'preparing'], ['done', 'tab_done', o => o.status === 'delivered' && inRange(o)], ['cancelled', 'tab_cancelled', o => o.status === 'cancelled' && inRange(o)]];
 
   function merge() {
     orders.clear();
@@ -125,9 +157,16 @@
   function draw() {
     const all = [...orders.values()];
     const pending = all.filter(o => o.status === 'pending');
-    setAlarm(!!audio && pending.length > 0);
+    setAlarm(pending.length > 0);
     $('tabs').innerHTML = TABS.map(([k, label, fn]) => { const n = all.filter(fn).length; return `<button class="${tab === k ? 'active' : ''}" data-tab="${k}">${t(label)}<span class="count ${k === 'new' && n ? 'alert' : ''}">${n}</span></button>`; }).join('');
+    $('tabs').innerHTML += `<span class="range-switch">${['today', 'week'].map(r => `<button class="${range === r ? 'on' : ''}" data-range="${r}">${t('range_' + r)}</button>`).join('')}</span>`;
     $('tabs').querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => { tab = b.dataset.tab; draw(); }));
+    $('tabs').querySelectorAll('[data-range]').forEach(b => b.addEventListener('click', () => {
+      range = b.dataset.range;
+      try { localStorage.setItem('cashier_range', range); } catch (e) { /* ignore */ }
+      if (tab === 'new' || tab === 'preparing') tab = 'done';
+      draw();
+    }));
     const fn = TABS.find(x => x[0] === tab)[2];
     const list = all.filter(fn).sort((a, b) => tab === 'new' || tab === 'preparing' ? a.createdAtMs - b.createdAtMs : b.createdAtMs - a.createdAtMs);
     $('grid').innerHTML = list.length ? list.map(orderCard).join('') : `<div class="empty-state" style="grid-column:1/-1"><i data-lucide="receipt-text"></i><p>${t('no_orders_here')}</p></div>`;
@@ -168,18 +207,19 @@
       setConn(!snap.metadata.fromCache);
       sources[key] = new Map(snap.docs.map(d => [d.id, { id: d.id, ...d.data() }]));
       merge();
+      if (key === 'active') notifyNew([...sources.active.values()].filter(o => o.status === 'pending'), snap.metadata.fromCache);
     }, err => {
       console.error(err);
       setConn(false);
       if (err.code === 'permission-denied') { toast(t('account_disabled')); setTimeout(async () => { await StaffAuth.signOut(); location.href = '/cashier/login'; }, 2000); }
     });
     listen('active', m.query(col, m.where('branchId', '==', branchId), m.where('status', 'in', ['pending', 'preparing'])));
-    const listenToday = () => listen('today', m.query(col, m.where('branchId', '==', branchId), m.where('day', '==', currentDay)));
-    listenToday();
-    // Day rollover (in the restaurant's time zone): follow the new day.
+    const listenRecent = () => listen('recent', m.query(col, m.where('branchId', '==', branchId), m.where('day', 'in', lastDays(7))));
+    listenRecent();
+    // Day rollover (in the restaurant's time zone): follow the new 7-day window.
     setInterval(() => {
       const d = dayKey(Date.now());
-      if (d !== currentDay) { currentDay = d; if (unsubs.today) unsubs.today(); sources.today = new Map(); listenToday(); }
+      if (d !== currentDay) { currentDay = d; if (unsubs.recent) unsubs.recent(); sources.recent = new Map(); listenRecent(); }
     }, 60000);
   } catch (e) {
     console.error(e);

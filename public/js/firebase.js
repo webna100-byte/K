@@ -203,7 +203,27 @@ const Push = {
     const perm = await Notification.requestPermission();
     if (perm !== 'granted') return perm === 'denied' ? 'blocked' : 'default';
     await this._register(await this._token());
+    this.listen();
     return 'enabled';
+  },
+
+  /* While the site is open in front of the customer the browser does not show
+     pushes by itself: show them the same way (title, text, image, link). */
+  async listen() {
+    if (this._listening || this.state() !== 'enabled') return;
+    this._listening = true;
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const m = await FB.load('messaging');
+      m.onMessage(m.getMessaging(await FB.app()), payload => {
+        const n = payload.notification || {};
+        const logo = Store.data && Store.data.settings && Store.data.settings.logo;
+        reg.showNotification(n.title || '', {
+          body: n.body || '', image: n.image || undefined, icon: n.icon || logo || undefined,
+          data: { fg: true, link: (payload.data && payload.data.link) || (payload.fcmOptions && payload.fcmOptions.link) || '/notifications' }
+        });
+      });
+    } catch (e) { this._listening = false; console.warn('push listen', e); }
   },
 
   /* Quietly keeps the subscription in sync when the language changes or the

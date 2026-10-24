@@ -14,3 +14,15 @@ if (cfg.apiKey) {
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+
+/* Clicks on notifications the open page showed itself (Push.listen). */
+self.addEventListener('notificationclick', e => {
+  const data = e.notification.data || {};
+  if (!data.fg) return;
+  e.notification.close();
+  const url = new URL(data.link || '/', self.location.origin).href;
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    const same = list.find(c => c.url === url);
+    return same ? same.focus() : self.clients.openWindow(url);
+  }));
+});

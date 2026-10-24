@@ -22,9 +22,11 @@ function printReceipt(order, config) {
   const items = (order.items || []).map(i => `<tr><td>${i.qty}× ${esc(tf(i.name))}${tf(i.options) || i.notes ? `<div class="sub">${esc([tf(i.options), i.notes].filter(Boolean).join(' • '))}</div>` : ''}</td><td class="r">${money(i.lineTotal)}</td></tr>`).join('')
     + (order.gifts || []).map(g => `<tr><td>${g.qty}× ${esc(tf(g.name))}<div class="sub">${L.gift} · ${g.points} ${L.pts}</div></td><td class="r">${L.free}</td></tr>`).join('');
   const html = `<!DOCTYPE html><html lang="${lang}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><title>#${order.number}</title><style>
-    @page { size: ${width ? width + 'mm auto' : 'A4'}; margin: ${width ? '2mm' : '12mm'}; }
+    @page { size: ${width ? width + 'mm 200mm' : 'A4'}; margin: ${width ? '0' : '12mm'}; }
+    html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    tr, .notes, .num { break-inside: avoid; page-break-inside: avoid; }
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: Tahoma, Arial, sans-serif; color: #000; font-size: ${width === 58 ? 11 : 12.5}px; width: ${width ? (width - 4) + 'mm' : 'auto'}; }
+    body { margin: 0; padding: ${width ? '2mm 3mm' : '0'}; font-family: Tahoma, Arial, sans-serif; color: #000; font-size: ${width === 58 ? 11 : 12.5}px; width: ${width ? width + 'mm' : 'auto'}; }
     h1 { font-size: 1.35em; text-align: center; margin: 2px 0; }
     .c { text-align: center; } .num { font-size: 1.9em; font-weight: 700; text-align: center; margin: 4px 0; }
     table { width: 100%; border-collapse: collapse; } td { padding: 2px 0; vertical-align: top; } .r { text-align: end; white-space: nowrap; padding-inline-start: 6px; }
@@ -62,12 +64,26 @@ function printReceipt(order, config) {
   if (frame) frame.remove();
   frame = document.createElement('iframe');
   frame.id = 'printFrame';
-  frame.style.cssText = 'position:fixed;width:0;height:0;border:0;right:0;bottom:0;visibility:hidden';
+  frame.style.cssText = "position:fixed;width:" + (width ? width + "mm" : "210mm") + ";height:0;border:0;right:0;bottom:0;visibility:hidden";
   document.body.appendChild(frame);
   const doc = frame.contentWindow.document;
   doc.open(); doc.write(html); doc.close();
   let printed = false;
-  const go = () => { if (printed) return; printed = true; frame.contentWindow.focus(); frame.contentWindow.print(); };
+  const go = () => {
+    if (printed) return;
+    printed = true;
+    // Thermal roll: make the page exactly as long as the receipt, so the
+    // printer feeds/cuts once at the end instead of printing a long blank
+    // page or splitting the receipt over two pages.
+    if (width) {
+      const mm = Math.ceil(doc.body.scrollHeight * 25.4 / 96 * 1.02) + 5;
+      const st = doc.createElement('style');
+      st.textContent = `@page { size: ${width}mm ${mm}mm; margin: 0; }`;
+      doc.head.appendChild(st);
+    }
+    frame.contentWindow.focus();
+    frame.contentWindow.print();
+  };
   const img = doc.querySelector('img');
   if (img && !img.complete) { img.onload = go; img.onerror = go; setTimeout(go, 1500); } else setTimeout(go, 150);
 }
