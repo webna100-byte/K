@@ -73,8 +73,58 @@ function updateCartCount() {
   const el = document.getElementById('cartCount');
   if (!el) return;
   const n = Store.cartCount();
+  const grew = n > (Number(el.textContent) || 0);
   el.textContent = n;
   el.classList.toggle('hidden', !n);
+  if (grew) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+}
+
+/* ---------- Motion: reveal on scroll, header shadow, add-to-cart flight ---------- */
+const REVEAL_SEL = '.product-card, .home-category, .branch-card, .section-heading, .home-cta, .account-card, .menu-category-title, .cart-item, .summary-card, .locked-card, .notif-item, .gift-card, .level-card, .push-card, .success-card, .staff-order';
+function initMotion() {
+  document.documentElement.classList.add('js-motion');
+  const header = document.getElementById('site-header');
+  if (header) {
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 6);
+    window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  }
+  if (!('IntersectionObserver' in window)) { document.querySelectorAll(REVEAL_SEL).forEach(el => el.classList.add('reveal', 'in')); return; }
+  const io = new IntersectionObserver(entries => entries.forEach(en => {
+    // also reveal elements already scrolled past (e.g. after jumping to a category)
+    if (en.isIntersecting || en.boundingClientRect.top < 0) { en.target.classList.add('in'); io.unobserve(en.target); }
+  }), { rootMargin: '0px 0px -6% 0px', threshold: 0.05 });
+  const scan = root => (root.querySelectorAll ? root.querySelectorAll(REVEAL_SEL) : []).forEach(el => {
+    if (el.dataset.rv) return;
+    el.dataset.rv = '1';
+    const i = Array.prototype.indexOf.call(el.parentNode.children, el);
+    el.style.setProperty('--d', Math.min(i, 8) * 70 + 'ms');
+    el.classList.add('reveal');
+    io.observe(el);
+  });
+  const main = document.getElementById('main') || document.body;
+  scan(main);
+  new MutationObserver(muts => muts.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) { if (n.matches && n.matches(REVEAL_SEL)) scan({ querySelectorAll: () => [n] }); scan(n); } }))).observe(main, { childList: true, subtree: true });
+  // Safety net: never leave content hidden.
+  setTimeout(() => document.querySelectorAll('.reveal:not(.in)').forEach(el => { const r = el.getBoundingClientRect(); if (r.top < innerHeight) el.classList.add('in'); }), 1500);
+}
+
+/* A small copy of the product image flies into the cart icon. */
+function flyToCart(fromEl, imgSrc) {
+  try {
+    const cart = document.querySelector('.cart-btn');
+    if (!cart || !fromEl || !fromEl.animate || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const a = fromEl.getBoundingClientRect(), b = cart.getBoundingClientRect();
+    const dot = document.createElement('img');
+    dot.src = imgSrc;
+    dot.style.cssText = `position:fixed;z-index:400;left:${a.left + a.width / 2 - 28}px;top:${a.top + a.height / 2 - 28}px;width:56px;height:56px;border-radius:50%;object-fit:cover;box-shadow:0 8px 24px rgba(0,0,0,.35);pointer-events:none`;
+    document.body.appendChild(dot);
+    const dx = b.left + b.width / 2 - (a.left + a.width / 2), dy = b.top + b.height / 2 - (a.top + a.height / 2);
+    dot.animate([
+      { transform: 'translate(0,0) scale(1)', opacity: 1 },
+      { transform: `translate(${dx * 0.55}px,${dy * 0.55 - 70}px) scale(.8)`, opacity: 1, offset: .55 },
+      { transform: `translate(${dx}px,${dy}px) scale(.2)`, opacity: .2 }
+    ], { duration: 750, easing: 'cubic-bezier(.4,0,.2,1)' }).onfinish = () => dot.remove();
+  } catch (e) { /* decoration only */ }
 }
 
 /* Where "browse the menu" should go: the branch picker first when there
@@ -322,6 +372,7 @@ async function boot(pageKey, render, { colors, needsAuth = false } = {}) {
     console.error(e);
   }
   renderIcons();
+  initMotion();
   hideSplash();
   authReady.then(() => Push.sync().then(() => Push.listen()));
 }

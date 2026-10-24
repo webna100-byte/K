@@ -317,6 +317,7 @@ function openProductModal(productId) {
       qty: state.qty
     });
     Store.saveCart(cart);
+    flyToCart(document.getElementById('addToCartBtn'), product.image || PLACEHOLDER_IMG);
     updateCartCount();
     toast(t('item_added'));
     closeModal();

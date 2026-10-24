@@ -625,3 +625,121 @@ body.cat-bar-static .menu-category-section { scroll-margin-top: calc(var(--heade
 .cashier-tabs .range-switch button.on { background: var(--accent); color: #fff; }
 .sound-warn { position: fixed; inset-inline: 12px; top: 70px; z-index: 160; display: none; background: #dc2626; color: #fff; border: 0; border-radius: 16px; padding: 18px; font-size: 1.15rem; font-weight: 800; box-shadow: var(--shadow-lg); animation: shake .5s ease-in-out infinite alternate; }
 .sound-warn.show { display: block; }
+
+/* =====================================================================
+   Polish: richer look + motion (customer pages only: body[data-page]).
+   Every animation is switched off for visitors who prefer reduced motion.
+   ===================================================================== */
+:root { --ease: cubic-bezier(.22, 1, .36, 1); }
+
+/* page entrance */
+body[data-page] main { animation: pageIn .55s var(--ease) both; }
+@keyframes pageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+@keyframes kenburns { from { transform: scale(1) translate(0, 0); } to { transform: scale(1.12) translate(-1.5%, -1%); } }
+@keyframes shine { 0%, 62% { left: -70%; } 100% { left: 150%; } }
+@keyframes ring { 0% { transform: scale(.9); opacity: .8; } 70%, 100% { transform: scale(1.5); opacity: 0; } }
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.35) rotate(-6deg); } 100% { transform: scale(1); } }
+@keyframes floaty { from { transform: translate(0, 0); } to { transform: translate(18px, -14px); } }
+
+/* scroll reveal (JS adds .reveal, then .in when it enters the screen) */
+html.js-motion .reveal { opacity: 0; translate: 0 28px; transition: opacity .7s var(--ease) var(--d, 0ms), translate .7s var(--ease) var(--d, 0ms); }
+html.js-motion .reveal.in { opacity: 1; translate: 0 0; }
+
+/* header */
+body[data-page] #site-header { transition: box-shadow .3s, background .3s; background: color-mix(in srgb, var(--header-bg) 92%, transparent); backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: saturate(160%) blur(14px); }
+body[data-page] #site-header.scrolled { box-shadow: 0 8px 28px rgba(16, 24, 40, .12); }
+.cart-count.bump { animation: pop .5s var(--ease); }
+.icon-btn, .lang-toggle { transition: transform .2s var(--ease), box-shadow .2s; }
+.icon-btn:active, .lang-toggle:active { transform: scale(.92); }
+
+/* buttons: gradient glow + moving shine */
+body[data-page] .btn-primary, body[data-page] .btn-secondary, body[data-page] .product-add-btn { position: relative; overflow: hidden; box-shadow: 0 10px 22px color-mix(in srgb, var(--accent) 30%, transparent); transition: transform .2s var(--ease), box-shadow .25s; }
+body[data-page] .btn-primary::after, body[data-page] .btn-secondary::after, body[data-page] .product-add-btn::after { content: ''; position: absolute; top: 0; bottom: 0; left: -70%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .42), transparent); transform: skewX(-20deg); animation: shine 4.5s ease-in-out infinite; pointer-events: none; }
+body[data-page] .btn-primary:hover, body[data-page] .btn-secondary:hover { transform: translateY(-2px); box-shadow: 0 14px 28px color-mix(in srgb, var(--accent) 38%, transparent); }
+body[data-page] .btn-primary:active, body[data-page] .btn-secondary:active { transform: scale(.97); }
+body[data-page] .btn-primary:disabled::after { display: none; }
+
+/* home hero: slow zoom background, staggered text, curved bottom */
+.home-hero { background: #1d1d1d; min-height: 64vh; border-radius: 0 0 38px 38px; }
+.home-hero::before { content: ''; position: absolute; inset: 0; background: var(--hero-image, none) center / cover no-repeat; animation: kenburns 20s ease-in-out infinite alternate; }
+.home-hero-overlay { background: linear-gradient(180deg, rgba(0, 0, 0, .18) 0%, rgba(0, 0, 0, .7) 100%); }
+.home-hero-content > * { animation: fadeUp .9s var(--ease) both; }
+.home-hero-content > :nth-child(1) { animation-delay: .1s; }
+.home-hero-content > :nth-child(2) { animation-delay: .22s; }
+.home-hero-content > :nth-child(3) { animation-delay: .34s; }
+.home-hero-content > :nth-child(4) { animation-delay: .46s; }
+.home-eyebrow { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, .16); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.home-hero h1 { text-shadow: 0 6px 30px rgba(0, 0, 0, .45); }
+.home-hero .btn-secondary { padding: 14px 30px; font-size: 1.05rem; border-radius: 999px; }
+.account-card { border-radius: 24px; border-color: transparent; }
+
+/* section headings */
+.section-heading span { display: inline-block; padding: 5px 14px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 11%, transparent); }
+.section-heading h2::after { content: ''; display: block; width: 56px; height: 5px; border-radius: 4px; margin: 12px auto 0; background: var(--button-bg); }
+
+/* home categories */
+.home-category-grid { gap: 14px; }
+body[data-page] .home-category { padding: 8px; border-radius: 24px; border-color: transparent; box-shadow: 0 2px 4px rgba(16, 24, 40, .04), 0 10px 26px rgba(16, 24, 40, .08); overflow: hidden; transition: transform .35s var(--ease), box-shadow .35s var(--ease), opacity .7s var(--ease) var(--d, 0ms), translate .7s var(--ease) var(--d, 0ms); }
+.home-category img { aspect-ratio: 1; border-radius: 18px; transition: transform .7s var(--ease); }
+.home-category:hover { transform: translateY(-6px); box-shadow: 0 18px 38px color-mix(in srgb, var(--accent) 22%, rgba(16, 24, 40, .1)); }
+.home-category:hover img { transform: scale(1.1); }
+.home-category:active { transform: scale(.97); }
+.home-category strong { padding: 12px 4px 6px; }
+
+/* product cards */
+body[data-page] .product-card { border-radius: 22px; border-color: transparent; box-shadow: 0 2px 4px rgba(16, 24, 40, .04), 0 10px 28px rgba(16, 24, 40, .09); transition: transform .35s var(--ease), box-shadow .35s var(--ease), opacity .7s var(--ease) var(--d, 0ms), translate .7s var(--ease) var(--d, 0ms); }
+.product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 42px color-mix(in srgb, var(--accent) 22%, rgba(16, 24, 40, .1)); }
+.product-card:active { transform: scale(.98); }
+.product-image-wrap { overflow: hidden; background: var(--surface-2); }
+.product-card img { aspect-ratio: 1 / 1; transition: transform .7s var(--ease); }
+.product-card:hover img { transform: scale(1.09); }
+.product-info { padding: 12px; gap: 5px; }
+.product-info h3 { font-size: .95rem; }
+.product-price { color: var(--accent); font-size: 1.05rem; }
+.product-add-btn { border-radius: 999px; padding: 10px; }
+.discount-badge { box-shadow: 0 6px 14px rgba(200, 30, 30, .35); }
+
+/* menu: category bar + titles */
+body[data-page] .categories-bar { background: color-mix(in srgb, var(--page-bg) 90%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 6px 18px rgba(16, 24, 40, .05); }
+.category-chip img, .category-chip { transition: transform .3s var(--ease), border-color .3s, box-shadow .3s, background .3s, color .3s; }
+.category-chip:active { transform: scale(.94); }
+.category-chip.active img { transform: scale(1.1); box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 35%, transparent); }
+.cat-style-pills .category-chip.active, .cat-style-cards .category-chip.active { transform: translateY(-2px); box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 30%, transparent); }
+.menu-category-title { display: flex; align-items: center; gap: 10px; font-size: 1.25rem; }
+.menu-category-title::before { content: ''; width: 6px; height: 1.25em; border-radius: 4px; background: var(--button-bg); }
+.slider { border-radius: 0 0 28px 28px; box-shadow: 0 10px 28px rgba(16, 24, 40, .12); }
+
+/* branches, locked pages, cart */
+body[data-page] .branch-card { border-radius: 24px; border-color: transparent; box-shadow: 0 2px 4px rgba(16, 24, 40, .04), 0 12px 30px rgba(16, 24, 40, .1); transition: transform .35s var(--ease), box-shadow .35s var(--ease), opacity .7s var(--ease) var(--d, 0ms), translate .7s var(--ease) var(--d, 0ms); }
+.branch-card:hover { transform: translateY(-6px); box-shadow: 0 20px 42px color-mix(in srgb, var(--accent) 22%, rgba(16, 24, 40, .1)); }
+.branch-card img { transition: transform .7s var(--ease); }
+.branch-card:hover img { transform: scale(1.08); }
+.page-hero { animation: fadeUp .8s var(--ease) both; }
+.cart-item { border-radius: 18px; }
+
+/* call-to-action band */
+body[data-page] .home-cta { position: relative; overflow: hidden; width: calc(100% - 32px); margin: 44px auto; background: var(--button-bg); color: #fff; border-radius: 30px; box-shadow: 0 20px 44px color-mix(in srgb, var(--accent) 32%, transparent); }
+.home-cta::before, .home-cta::after { content: ''; position: absolute; border-radius: 50%; background: rgba(255, 255, 255, .14); animation: floaty 7s ease-in-out infinite alternate; pointer-events: none; }
+.home-cta::before { width: 190px; height: 190px; top: -70px; inset-inline-end: -40px; }
+.home-cta::after { width: 120px; height: 120px; bottom: -50px; inset-inline-start: 24%; animation-delay: -3s; }
+.home-cta > * { position: relative; z-index: 1; }
+.home-cta span { color: rgba(255, 255, 255, .88); }
+.home-cta .btn-primary { background: #fff; color: var(--accent); box-shadow: 0 10px 24px rgba(0, 0, 0, .18); }
+
+/* bottom bar */
+.bn-item { transition: color .25s; }
+.bn-icon { transition: background .25s, transform .3s var(--ease); }
+.bn-item:active .bn-icon { transform: scale(.88); }
+.bn-item.active .bn-icon i { animation: pop .55s var(--ease); }
+.bn-home .bn-icon::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); animation: ring 2.6s ease-out infinite; pointer-events: none; }
+
+/* toast + drawer */
+.toast { border-radius: 999px; padding: 12px 22px; background: var(--button-bg); box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 35%, transparent); transition: opacity .35s var(--ease), transform .45s var(--ease); }
+.drawer-link { transition: background .2s, transform .2s var(--ease); }
+.drawer-link:active { transform: scale(.97); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html.js-motion .reveal { opacity: 1; translate: 0 0; }
+}
