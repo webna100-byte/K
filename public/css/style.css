@@ -623,3 +623,5 @@ body.cat-bar-static .menu-category-section { scroll-margin-top: calc(var(--heade
 .cashier-tabs .range-switch { margin-inline-start: auto; display: flex; flex: 0 0 auto; border: 1.5px solid var(--border); border-radius: 99px; overflow: hidden; }
 .cashier-tabs .range-switch button { border: 0; border-radius: 0; padding: 8px 12px; font-size: .8rem; }
 .cashier-tabs .range-switch button.on { background: var(--accent); color: #fff; }
+.sound-warn { position: fixed; inset-inline: 12px; top: 70px; z-index: 160; display: none; background: #dc2626; color: #fff; border: 0; border-radius: 16px; padding: 18px; font-size: 1.15rem; font-weight: 800; box-shadow: var(--shadow-lg); animation: shake .5s ease-in-out infinite alternate; }
+.sound-warn.show { display: block; }

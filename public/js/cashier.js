@@ -25,6 +25,8 @@
   $('shiftNote').textContent = t('start_shift_note');
   $('shiftBtn').querySelector('span').textContent = t('start_shift');
   $('alarm').querySelector('span').textContent = t('new_order_alert');
+  $('soundTest').textContent = '🔊 ' + t('test_sound');
+  $('soundWarn').textContent = '🔇 ' + t('sound_blocked');
 
   /* ---------- Busy mode: pauses new orders for this branch ---------- */
   $('busyLabel').textContent = t('busy');
@@ -43,53 +45,106 @@
   });
 
   /* ---------- Alarm ----------
-     A looping <audio> track (generated here, no sound file needed). Unlike
-     timer-driven beeps it keeps ringing while the tab is in the background
-     or the screen has been idle for hours, until no order is pending. */
-  function alarmWav() {
-    const rate = 22050, secs = 1.6, n = Math.floor(rate * secs);
-    const buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
-    const str = (o, t) => [...t].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
-    str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVEfmt '); v.setUint32(16, 16, true);
-    v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true);
-    v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, 'data'); v.setUint32(40, n * 2, true);
+     Looping alarm played through the Web Audio API (the loop runs on the
+     audio thread, so background-tab timer throttling can't silence it), with
+     a looping <audio> element as fallback. Both are unlocked by the tap on
+     "Start receiving orders". If the browser still blocks the sound while an
+     order is pending, a big tap-to-enable banner is shown. */
+  const RATE = 22050;
+  function alarmSamples() {
+    const n = Math.floor(RATE * 1.6), out = new Float32Array(n);
     const beeps = [[0, 880], [.18, 1175], [.36, 880], [.54, 1175]];
     for (let i = 0; i < n; i++) {
-      const t = i / rate;
-      const b = beeps.find(([at]) => t >= at && t < at + .15);
-      let x = 0;
-      if (b) { const env = Math.min(1, (t - b[0]) / .01, (b[0] + .15 - t) / .01); x = (Math.sin(2 * Math.PI * b[1] * t) > 0 ? 1 : -1) * .45 * env; }
-      v.setInt16(44 + i * 2, x * 32767, true);
+      const tt = i / RATE, b = beeps.find(([at]) => tt >= at && tt < at + .15);
+      if (b) { const env = Math.min(1, (tt - b[0]) / .01, (b[0] + .15 - tt) / .01); out[i] = (Math.sin(2 * Math.PI * b[1] * tt) > 0 ? 1 : -1) * .6 * env; }
     }
+    return out;
+  }
+  function alarmWavUrl(samples) {
+    const n = samples.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+    const str = (o, x) => [...x].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+    str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVEfmt '); v.setUint32(16, 16, true);
+    v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, RATE, true); v.setUint32(28, RATE * 2, true);
+    v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, 'data'); v.setUint32(40, n * 2, true);
+    for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, samples[i] * 32767, true);
     return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
   }
-  let audio = null, ringing = false, wakeLock = null;
+  let ctx = null, ctxBuffer = null, ctxSource = null, audio = null, ringing = false, started = false, wakeLock = null, testing = false;
+
+  function wantSound() { return ringing || testing; }
+  function ctxRunning() { return ctx && ctx.state === 'running'; }
+  function startCtx() {
+    if (!ctxRunning() || ctxSource) return !!ctxSource;
+    ctxSource = ctx.createBufferSource();
+    ctxSource.buffer = ctxBuffer; ctxSource.loop = true;
+    const g = ctx.createGain(); g.gain.value = 1;
+    ctxSource.connect(g).connect(ctx.destination);
+    ctxSource.start();
+    return true;
+  }
+  function stopCtx() { if (ctxSource) { try { ctxSource.stop(); } catch (e) { /* already stopped */ } ctxSource = null; } }
+  function soundOk() { return !!ctxSource || (audio && !audio.paused); }
+
+  /* Called on every state change and by the watchdog. */
+  async function syncSound() {
+    if (!started) return;
+    if (wantSound()) {
+      if (ctx && ctx.state !== 'running') { try { await ctx.resume(); } catch (e) { /* needs a tap */ } }
+      if (!startCtx() && audio && audio.paused) { try { await audio.play(); } catch (e) { console.warn('alarm blocked', e); } }
+      else if (ctxSource && audio && !audio.paused) audio.pause();
+    } else {
+      stopCtx();
+      if (audio && !audio.paused) { audio.pause(); audio.currentTime = 0; }
+    }
+    $('soundWarn').classList.toggle('show', wantSound() && !soundOk());
+  }
   function setAlarm(on) {
     $('alarm').classList.toggle('show', on);
     document.title = on ? `🔔 ${t('new_order_alert')}` : t('cashier_panel');
     ringing = on;
-    if (!audio) return;
-    if (on) { if (audio.paused) audio.play().catch(e => console.warn('alarm', e)); }
-    else if (!audio.paused) { audio.pause(); audio.currentTime = 0; }
     if (on && navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    syncSound();
   }
-  // Watchdog: if the browser paused the sound (audio focus, a phone call...)
-  // while an order is still pending, start it again.
-  setInterval(() => { if (ringing && audio && audio.paused) audio.play().catch(() => {}); }, 4000);
+  setInterval(syncSound, 2000);
   async function keepAwake() {
     try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) { /* not critical */ }
   }
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { keepAwake(); if (ringing && audio) audio.play().catch(() => {}); } });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { keepAwake(); syncSound(); } });
+
+  /* Must run inside a tap: unlocks both audio paths for later orders. */
+  function unlockAudio() {
+    try {
+      if (!ctx) {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const samples = alarmSamples();
+        ctxBuffer = ctx.createBuffer(1, samples.length, RATE);
+        ctxBuffer.copyToChannel(samples, 0);
+        audio = new Audio(alarmWavUrl(samples));
+        audio.loop = true; audio.volume = 1;
+        audio.addEventListener('pause', () => { if (wantSound()) setTimeout(syncSound, 300); });
+      }
+      ctx.resume();
+      // A silent blip inside the tap fully unlocks the context on iOS.
+      const o = ctx.createBufferSource(); o.buffer = ctx.createBuffer(1, 1, RATE); o.connect(ctx.destination); o.start(0);
+      // Same for the <audio> element: start inside the tap, stop right away.
+      audio.muted = true; audio.play().then(() => { audio.pause(); audio.currentTime = 0; audio.muted = false; }).catch(() => { audio.muted = false; });
+    } catch (e) { console.warn('audio unlock', e); }
+    started = true;
+  }
   $('shiftBtn').addEventListener('click', () => {
-    audio = new Audio(alarmWav());
-    audio.loop = true;
-    audio.volume = 1;
-    // Starting (and pausing) inside the tap unlocks playback for later orders.
-    audio.play().then(() => { if (!ringing) audio.pause(); }).catch(() => {});
+    unlockAudio();
     if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {});
     $('shift').remove();
     keepAwake();
     draw();
+    setTimeout(syncSound, 400);
+  });
+  $('soundWarn').addEventListener('click', () => { unlockAudio(); syncSound(); });
+  $('soundTest').addEventListener('click', () => {
+    unlockAudio();
+    testing = true; syncSound();
+    toast(t('sound_testing'));
+    setTimeout(() => { testing = false; syncSound(); }, 3500);
   });
   const seenPending = new Set();
   let firstSnapshot = true;
