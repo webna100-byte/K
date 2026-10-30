@@ -175,6 +175,17 @@ function renderSections() {
   setupScrollSpy(sections.map(x => x.cat.id));
 }
 
+/* Slides the category bar sideways so the active chip stays visible (centered),
+   e.g. when the visitor scrolls down to a category that is off-screen in the bar.
+   Uses relative scrolling, so it works the same in RTL and LTR. */
+function centerChip(chip) {
+  const bar = document.getElementById('categoriesBar');
+  if (!bar || !chip) return;
+  const b = bar.getBoundingClientRect(), c = chip.getBoundingClientRect();
+  const delta = (c.left + c.width / 2) - (b.left + b.width / 2);
+  if (Math.abs(delta) > 4) bar.scrollBy({ left: delta, behavior: 'smooth' });
+}
+
 /* Highlights the category chip matching whichever section is currently in view. */
 function setupScrollSpy(ids) {
   const chips = {};
@@ -184,7 +195,7 @@ function setupScrollSpy(ids) {
       if (!entry.isIntersecting) return;
       const id = entry.target.id.replace('cat-', '');
       document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
-      if (chips[id]) chips[id].classList.add('active');
+      if (chips[id]) { chips[id].classList.add('active'); centerChip(chips[id]); }
     });
   }, { rootMargin: '-140px 0px -60% 0px', threshold: 0 });
   ids.forEach(id => {
